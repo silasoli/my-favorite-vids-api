@@ -23,17 +23,17 @@ export class AuthService {
 
     if (!passMatch) return null;
 
-    return { _id: user._id, name: user.username, email: user.email };
+    return { _id: user._id, username: user.username, email: user.email };
   }
 
   async login(user: Ilogin) {
-    const { _id, name, email } = user;
+    const { _id, username, email } = user;
 
-    const payload = { name, sub: _id };
+    const payload = { username, sub: _id };
     return {
       id: _id,
       email,
-      name,
+      username,
       access_token: this.jwtService.sign(payload),
     };
   }
