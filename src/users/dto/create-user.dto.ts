@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'É necessário informar o nome do usuário.' })
-  name: string;
+  username: string;
 
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'É necessário informar o email do usuário.' })
@@ -14,4 +14,8 @@ export class CreateUserDto {
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'É necessário informar o password do usuário.' })
   password: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty({ message: 'É necessário informar a privacidade da conta.' })
+  private: boolean;
 }

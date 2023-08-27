@@ -23,7 +23,7 @@ export class AuthService {
 
     if (!passMatch) return null;
 
-    return { _id: user._id, name: user.name, email: user.email };
+    return { _id: user._id, name: user.username, email: user.email };
   }
 
   async login(user: Ilogin) {
