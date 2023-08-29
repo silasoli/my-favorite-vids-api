@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
-export interface Ilogin {
+export interface Ipayload {
   _id?: mongoose.ObjectId | string;
+
+  email: string;
 
   name: string;
 
-  email: string;
+  access_token: string;
 }
