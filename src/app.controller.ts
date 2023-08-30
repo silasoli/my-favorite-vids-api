@@ -1,11 +1,10 @@
-import { Controller, Get, Header, HttpCode, Redirect } from '@nestjs/common';
+import { Controller, Get, Redirect } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Docs')
 @Controller('docs')
 export class AppController {
   @Get()
-  @HttpCode(301) // Use 301 for permanent redirect, or 302 for temporary
-  @Header('Location', '/docs')
-  redirectToDocs() { }
+  @Redirect('https://my-favorite-vids-api.vercel.app/docs')
+  redirectToDocs() {}
 }
