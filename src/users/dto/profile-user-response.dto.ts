@@ -5,9 +5,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ProfileUserResponseDto {
   constructor(user: User) {
-    const { _id, name, email } = user;
+    const { _id, username, email } = user;
 
-    return { _id, name, email };
+    return { _id, username, email };
   }
 
   @ApiProperty({ required: true })
@@ -16,7 +16,7 @@ export class ProfileUserResponseDto {
   @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty({ message: 'É necessário informar o email do usuário.' })
-  name: string;
+  username: string;
 
   @ApiProperty({ required: true })
   @IsNotEmpty({ message: 'É necessário informar o email do usuário.' })
