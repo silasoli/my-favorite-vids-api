@@ -88,7 +88,7 @@ export class UsersService {
     return this.userModel.deleteOne({ _id });
   }
 
-  public async comparePass(password: string, hash: string) {
-    return await bcrypt.compare(password, hash);
+  public async comparePass(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
   }
 }
