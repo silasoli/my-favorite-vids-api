@@ -8,13 +8,16 @@ export class User {
   _id?: mongoose.ObjectId | string;
 
   @Prop({ required: true, unique: true, lowercase: true })
-  name: string;
+  username: string;
 
   @Prop({ required: true, unique: true, lowercase: true })
   email: string;
 
   @Prop({ required: true, select: false })
   password: string;
+
+  @Prop({ required: true, default: true })
+  private: boolean;
 
   @Prop({ default: () => new Date() })
   createdAt: Date;
