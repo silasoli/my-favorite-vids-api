@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export interface Ilogin {
   _id?: mongoose.ObjectId | string;
 
-  name: string;
+  username: string;
 
   email: string;
 }

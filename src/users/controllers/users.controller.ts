@@ -13,9 +13,9 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User } from '../schemas/user.entity';
-import { ValidationUtil } from '../../common/validations.util';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { QueryWithHelpers } from 'mongoose';
+import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -34,31 +34,23 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get('names')
-  public async findAllNames(): Promise<User[]> {
-    return this.usersService.findAllNames();
-  }
-
   @Get(':id')
-  public async findOne(@Param('id') id: string): Promise<User> {
-    ValidationUtil.validObjectId(id);
-    return this.usersService.findOne(id);
+  public async findOne(@Param() params: IDQueryDTO): Promise<User> {
+    return this.usersService.findOne(params.id);
   }
 
   @Patch(':id')
   public async update(
-    @Param('id') id: string,
+    @Param() params: IDQueryDTO,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<QueryWithHelpers<unknown, unknown>> {
-    ValidationUtil.validObjectId(id);
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(params.id, updateUserDto);
   }
 
   @Delete(':id')
   public async remove(
-    @Param('id') id: string,
+    @Param() params: IDQueryDTO,
   ): Promise<QueryWithHelpers<unknown, unknown>> {
-    ValidationUtil.validObjectId(id);
-    return this.usersService.remove(id);
+    return this.usersService.remove(params.id);
   }
 }

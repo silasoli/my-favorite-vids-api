@@ -24,14 +24,19 @@ export class AuthService {
 
     if (!passMatch) return null;
 
-    return { _id: user._id, name: user.name, email: user.email };
+    return { _id: user._id, username: user.username, email: user.email };
   }
 
-  async login(user: Ilogin): Promise<Ipayload> {
-    const { _id, name, email } = user;
-    const access_token = this.jwtService.sign({ name, sub: _id })
+  async login(user: Ilogin) {
+    const { _id, username, email } = user;
 
-    return { _id, email, name, access_token };
+    const payload = { username, sub: _id };
+    return {
+      id: _id,
+      email,
+      username,
+      access_token: this.jwtService.sign(payload),
+    };
   }
 
   async decodeAccessToken<T extends object>(accessToken: string): Promise<T> {
