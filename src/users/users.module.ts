@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.entity';
 import { UsersProfileController } from './controllers/users-profile.controller';
 import { UsersProfileService } from './services/users-profile.service';
+import { RoleUtil } from '../common/roles/role.util';
 
 @Global()
 @Module({
@@ -12,7 +13,7 @@ import { UsersProfileService } from './services/users-profile.service';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UsersController, UsersProfileController],
-  providers: [UsersService, UsersProfileService],
-  exports: [UsersService],
+  providers: [UsersService, UsersProfileService, RoleUtil],
+  exports: [UsersService, RoleUtil],
 })
 export class UsersModule {}

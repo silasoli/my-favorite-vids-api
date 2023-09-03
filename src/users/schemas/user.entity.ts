@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
+import Role from '../../common/roles/role.enum';
 
 export type UserDocument = User & Document;
 @Schema()
@@ -18,6 +19,9 @@ export class User {
 
   @Prop({ required: true, default: true })
   private: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.Array })
+  roles: Role[];
 
   @Prop({ default: () => new Date() })
   createdAt: Date;

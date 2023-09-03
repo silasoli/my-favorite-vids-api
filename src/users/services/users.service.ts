@@ -5,6 +5,7 @@ import { Model, QueryWithHelpers } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import Role from '../../common/roles/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,7 @@ export class UsersService {
   }
 
   public async create(dto: CreateUserDto): Promise<User> {
-    const rawData = { ...dto };
+    const rawData = { ...dto, roles: [Role.USER] };
 
     await this.transformBody(rawData);
 
@@ -49,6 +50,12 @@ export class UsersService {
 
   public async findOne(_id: string): Promise<User> {
     return this.findUserByID(_id);
+  }
+
+
+  public async findRolesOfUser(_id: string): Promise<Role[]> {
+    const user = await this.userModel.findOne({ _id }, ['roles']);
+    return user.roles;
   }
 
   // private async validUpdate(_id: string, dto: UpdateUserDto): Promise<void> {
