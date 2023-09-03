@@ -5,7 +5,18 @@ export interface Ipayload {
 
   email: string;
 
-  name: string;
+  username: string;
+
+  access_token: string;
+}
+
+
+export interface IloginPayload {
+  id?: mongoose.ObjectId | string;
+
+  email: string;
+
+  username: string;
 
   access_token: string;
 }

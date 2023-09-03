@@ -5,6 +5,8 @@ import { Model, QueryWithHelpers } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import Role from '../../roles/enums/role.enum';
+import { UserResponseDto } from '../dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,16 +29,19 @@ export class UsersService {
     return this.userModel.findOne({ username: username.toLowerCase() });
   }
 
-  public async create(dto: CreateUserDto): Promise<User> {
-    const rawData = { ...dto };
+  public async create(dto: CreateUserDto): Promise<UserResponseDto> {
+    const rawData = { ...dto, roles: [Role.USER] };
 
     await this.transformBody(rawData);
 
-    return this.userModel.create(rawData);
+    const created = await this.userModel.create(rawData);
+
+    return new UserResponseDto(created);
   }
 
-  public async findAll(): Promise<User[]> {
-    return this.userModel.find();
+  public async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.userModel.find();
+    return users.map((user) => new UserResponseDto(user));
   }
 
   private async findUserByID(_id: string): Promise<User> {
@@ -47,31 +52,21 @@ export class UsersService {
     return user;
   }
 
-  public async findOne(_id: string): Promise<User> {
-    return this.findUserByID(_id);
+  public async findOne(_id: string): Promise<UserResponseDto> {
+    const user = await this.findUserByID(_id);
+    return new UserResponseDto(user);
   }
 
-  // private async validUpdate(_id: string, dto: UpdateUserDto): Promise<void> {
-  //   if (dto.email) {
-  //     const user = await this.findByEmail(dto.email);
-  //     if (user && String(user._id) != _id)
-  //       throw new BadRequestException('Email já utilizado.');
-  //   }
-
-  //   if (dto.username) {
-  //     const user = await this.findByName(dto.username);
-  //     if (user && String(user._id) != _id)
-  //       throw new BadRequestException('Nome já utilizado.');
-  //   }
-  // }
+  public async findRolesOfUser(_id: string): Promise<Role[]> {
+    const user = await this.userModel.findOne({ _id }, ['roles']);
+    return user.roles;
+  }
 
   public async update(
     _id: string,
     dto: UpdateUserDto,
   ): Promise<QueryWithHelpers<unknown, unknown>> {
     await this.findUserByID(_id);
-
-    // await this.validUpdate(_id, dto);
 
     const rawData = { ...dto };
 
@@ -80,12 +75,9 @@ export class UsersService {
     return this.userModel.updateOne({ _id }, rawData);
   }
 
-  public async remove(
-    _id: string,
-  ): Promise<QueryWithHelpers<unknown, unknown>> {
+  public async remove(_id: string): Promise<void> {
     await this.findUserByID(_id);
-
-    return this.userModel.deleteOne({ _id });
+    await this.userModel.deleteOne({ _id });
   }
 
   public async comparePass(password: string, hash: string): Promise<boolean> {

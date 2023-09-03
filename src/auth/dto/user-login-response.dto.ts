@@ -1,16 +1,16 @@
-import { User } from '../schemas/user.entity';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IloginPayload } from '../interfaces/Ipayload.interface';
 
-export class ProfileUserResponseDto {
-  constructor(user: User) {
-    const { _id, username, email, privy } = user;
+export class UserLoginResponseDto {
+  constructor(user: IloginPayload) {
+    const { id, username, email, access_token } = user;
 
-    return { _id: String(_id), username, email, privy };
+    return { id: String(id), username, email, access_token };
   }
 
   @ApiProperty({ required: true })
-  _id: string;
+  id: string;
 
   @ApiProperty({ required: true })
   @IsString()
@@ -22,6 +22,6 @@ export class ProfileUserResponseDto {
   @IsEmail({}, { message: 'O email informado deve ser válido' })
   email: string;
 
-  @ApiProperty({ required: false })
-  privy: boolean;
+  @ApiProperty({ required: true })
+  access_token: string;
 }

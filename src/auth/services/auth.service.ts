@@ -3,7 +3,8 @@ import { UserLoginDto } from '../dto/user-login.dto';
 import { UsersService } from '../../users/services/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { Ilogin } from '../interfaces/Ilogin.interface';
-import { Ipayload } from '../interfaces/Ipayload.interface';
+import { IloginPayload } from '../interfaces/Ipayload.interface';
+import { UserLoginResponseDto } from '../dto/user-login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,16 +28,17 @@ export class AuthService {
     return { _id: user._id, username: user.username, email: user.email };
   }
 
-  async login(user: Ilogin) {
+  async login(user: Ilogin): Promise<IloginPayload> {
     const { _id, username, email } = user;
 
     const payload = { username, sub: _id };
-    return {
+
+    return new UserLoginResponseDto({
       id: _id,
       email,
       username,
       access_token: this.jwtService.sign(payload),
-    };
+    })
   }
 
   async decodeAccessToken<T extends object>(accessToken: string): Promise<T> {
