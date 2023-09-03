@@ -58,27 +58,12 @@ export class UsersService {
     return user.roles;
   }
 
-  // private async validUpdate(_id: string, dto: UpdateUserDto): Promise<void> {
-  //   if (dto.email) {
-  //     const user = await this.findByEmail(dto.email);
-  //     if (user && String(user._id) != _id)
-  //       throw new BadRequestException('Email já utilizado.');
-  //   }
-
-  //   if (dto.username) {
-  //     const user = await this.findByName(dto.username);
-  //     if (user && String(user._id) != _id)
-  //       throw new BadRequestException('Nome já utilizado.');
-  //   }
-  // }
 
   public async update(
     _id: string,
     dto: UpdateUserDto,
   ): Promise<QueryWithHelpers<unknown, unknown>> {
     await this.findUserByID(_id);
-
-    // await this.validUpdate(_id, dto);
 
     const rawData = { ...dto };
 
