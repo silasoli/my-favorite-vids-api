@@ -18,7 +18,7 @@ export class User {
   password: string;
 
   @Prop({ required: true, default: true })
-  private: boolean;
+  privy: boolean;
 
   @Prop({ type: mongoose.Schema.Types.Array })
   roles: Role[];

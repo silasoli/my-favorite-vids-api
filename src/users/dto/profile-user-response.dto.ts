@@ -1,17 +1,16 @@
-import mongoose from 'mongoose';
 import { User } from '../schemas/user.entity';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ProfileUserResponseDto {
   constructor(user: User) {
-    const { _id, username, email } = user;
+    const { _id, username, email, privy } = user;
 
-    return { _id, username, email };
+    return { _id: String(_id), username, email, privy };
   }
 
   @ApiProperty({ required: true })
-  _id?: mongoose.ObjectId | string;
+  _id: string;
 
   @ApiProperty({ required: true })
   @IsString()
@@ -24,5 +23,5 @@ export class ProfileUserResponseDto {
   email: string;
 
   @ApiProperty({ required: false })
-  private?: boolean;
+  privy: boolean;
 }
