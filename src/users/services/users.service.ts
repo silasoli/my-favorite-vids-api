@@ -5,7 +5,7 @@ import { Model, QueryWithHelpers } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import Role from '../../common/roles/role.enum';
+import Role from '../../roles/enums/role.enum';
 
 @Injectable()
 export class UsersService {

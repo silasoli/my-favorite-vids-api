@@ -16,9 +16,9 @@ import { User } from '../schemas/user.entity';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { QueryWithHelpers } from 'mongoose';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
-import { Role } from '../../common/roles/roles.decorator';
-import Roles from '../../common/roles/role.enum';
-import { RoleGuard } from '../../common/roles/role.guard';
+import { Role } from '../../roles/decorators/roles.decorator';
+import Roles from '../../roles/enums/role.enum';
+import { RoleGuard } from '../../roles/guards/role.guard';
 
 @ApiBearerAuth()
 @ApiTags('Users')

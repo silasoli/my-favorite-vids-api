@@ -5,9 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleUtil } from './role.util';
-import { ROLE_KEY } from './roles.decorator';
-import Role from './role.enum';
+import { RoleUtil } from '../utils/role.util';
+import { ROLE_KEY } from '../decorators/roles.decorator';
+import Role from '../enums/role.enum';
 import { RequestWithUser } from '../../auth/interfaces/Iuser-request.interface';
 
 @Injectable()
