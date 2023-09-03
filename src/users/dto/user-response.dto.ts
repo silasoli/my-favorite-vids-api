@@ -1,12 +1,14 @@
 import { User } from '../schemas/user.entity';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import Roles from '../../roles/enums/role.enum';
 
-export class ProfileUserResponseDto {
+export class UserResponseDto {
   constructor(user: User) {
-    const { _id, username, email, privy } = user;
+    console.log(user);
+    const { _id, username, email, privy, active, roles } = user;
 
-    return { _id: String(_id), username, email, privy };
+    return { _id: String(_id), username, email, privy, active, roles };
   }
 
   @ApiProperty({ required: true })
@@ -22,6 +24,12 @@ export class ProfileUserResponseDto {
   @IsEmail({}, { message: 'O email informado deve ser válido' })
   email: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: true })
+  roles: Roles[];
+
+  @ApiProperty({ required: true })
   privy: boolean;
+
+  @ApiProperty({ required: true })
+  active: boolean;
 }
