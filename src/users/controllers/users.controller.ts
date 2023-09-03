@@ -29,8 +29,8 @@ export class UsersController {
 
   @Post()
   @Role([Roles.ADMIN])
-  public async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+  public async create(@Body() dto: CreateUserDto): Promise<User> {
+    return this.usersService.create(dto);
   }
 
   @Get()
@@ -49,9 +49,9 @@ export class UsersController {
   @Role([Roles.ADMIN])
   public async update(
     @Param() params: IDQueryDTO,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() dto: UpdateUserDto,
   ): Promise<QueryWithHelpers<unknown, unknown>> {
-    return this.usersService.update(params.id, updateUserDto);
+    return this.usersService.update(params.id, dto);
   }
 
   @Delete(':id')

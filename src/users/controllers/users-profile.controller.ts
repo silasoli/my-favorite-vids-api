@@ -23,6 +23,7 @@ import { DeleteUserDto } from '../dto/delete-user.dto';
 import { RoleGuard } from '../../roles/guards/role.guard';
 import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
+import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 
 @ApiBearerAuth()
 @ApiTags('Profile')
@@ -40,7 +41,7 @@ export class UsersProfileController {
   @Get('/user')
   @Role([Roles.USER])
   public async findProfile(
-    @UserRequest() user: any,
+    @UserRequest() user: UserRequestDTO,
   ): Promise<ProfileUserResponseDto> {
     return this.usersProfileService.findProfile(user._id);
   }
@@ -55,7 +56,7 @@ export class UsersProfileController {
   @Patch('/user')
   @Role([Roles.USER])
   public async updateProfile(
-    @UserRequest() user: any,
+    @UserRequest() user: UserRequestDTO,
     @Body() dto: UpdateProfileUserDto,
   ): Promise<ProfileUserResponseDto> {
     return this.usersProfileService.updateProfile(user._id, dto);
@@ -75,7 +76,7 @@ export class UsersProfileController {
   @Delete('/user')
   @Role([Roles.USER])
   public async remove(
-    @UserRequest() user: any,
+    @UserRequest() user: UserRequestDTO,
     @Body() dto: DeleteUserDto,
   ): Promise<void> {
     return this.usersProfileService.deleteUser(user._id, dto);
