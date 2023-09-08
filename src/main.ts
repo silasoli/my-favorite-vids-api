@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  app.useGlobalFilters(new AllExceptionsFilter(), new MongoExceptionFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter(), new MongoExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
