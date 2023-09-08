@@ -36,10 +36,13 @@ import { Observable, of } from 'rxjs';
 
 export const storage = diskStorage({
   destination: './uploads/profile-picture/',
-  filename: (req, file, cb) => {
+  filename: (req: any, file, cb) => {
+    const userid = req.user._id;
     const filename: string =
       path.parse(file.originalname).name.replace(/\s/g, '') +
+      userid +
       new Date().getTime();
+
     const extension: string = path.parse(file.originalname).ext;
 
     cb(null, `${filename}${extension}`);
@@ -113,7 +116,7 @@ export class UsersProfileController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Patch('/user/profile-picture')
+  @Patch('/user/picture')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UploadProfilePictureDto })
   @UseInterceptors(FileInterceptor('file', { storage }))
@@ -134,7 +137,7 @@ export class UsersProfileController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Get('/user/profile-picture')
+  @Get('/user/picture')
   public async getProfilePicture<T>(
     @UserRequest() user: UserRequestDTO,
     @Res() res,
@@ -144,4 +147,3 @@ export class UsersProfileController {
     return of(res.sendFile(fileUrl));
   }
 }
-
