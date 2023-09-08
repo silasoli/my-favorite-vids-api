@@ -35,7 +35,7 @@ import { diskStorage } from 'multer';
 import { Observable, of } from 'rxjs';
 
 export const storage = diskStorage({
-  destination: './uploads/profile-picture/',
+  destination: '/tmp/uploads/profile-picture/',
   filename: (req: any, file, cb) => {
     const userid = req.user._id;
     const filename: string =
