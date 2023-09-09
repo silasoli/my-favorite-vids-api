@@ -52,7 +52,7 @@ export class UsersProfileService {
   private deleteProfilePicture(url: string) {
     const profilePicturePath = join(
       process.cwd(),
-      '/tmp/uploads/profile-picture/',
+      'uploads/profile-picture/',
       url,
     );
 
@@ -84,9 +84,6 @@ export class UsersProfileService {
       ? user.profile_picture
       : 'default-image.png';
 
-    return join(
-      process.cwd(),
-      '/tmp/uploads/profile-picture/' + profilePicture,
-    );
+    return join(process.cwd(), 'uploads/profile-picture/' + profilePicture);
   }
 }
