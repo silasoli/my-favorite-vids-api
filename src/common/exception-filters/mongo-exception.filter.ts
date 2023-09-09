@@ -63,7 +63,8 @@ export const MongoExceptionErrors = {
   11000: {
     messages: {
       username: 'O nome de usuário já está em uso.',
-      email: 'O endereço de e-mail já está em uso.',
+      name: 'Este nome já está em uso.',
+      email: 'Este endereço de e-mail já está em uso.',
       default: 'Erro de chave duplicada.',
     },
   },
