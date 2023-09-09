@@ -5,7 +5,6 @@ import Roles from '../../roles/enums/role.enum';
 
 export class UserResponseDto {
   constructor(user: User) {
-    console.log(user);
     const { _id, username, email, privy, active, roles } = user;
 
     return { _id: String(_id), username, email, privy, active, roles };
