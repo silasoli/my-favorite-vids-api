@@ -4,6 +4,7 @@ import { Category, CategorySchema } from './schemas/category.entity';
 import { CategoriesController } from './controllers/categories.controller';
 import { CategoriesService } from './services/categories.service';
 import { UserCategoriesController } from './controllers/user-categories.controller';
+import { UserCategoriesService } from './services/user-categories.service';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { UserCategoriesController } from './controllers/user-categories.controll
     ]),
   ],
   controllers: [CategoriesController, UserCategoriesController],
-  providers: [CategoriesService],
+  providers: [CategoriesService, UserCategoriesService],
 })
 export class CategoriesModule {}
