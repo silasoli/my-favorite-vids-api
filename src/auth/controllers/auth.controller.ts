@@ -1,5 +1,5 @@
 import { Controller, Post, Body, ForbiddenException } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserLoginDto } from '../dto/user-login.dto';
 import { AuthService } from '../services/auth.service';
 import { Ilogin } from '../interfaces/Ilogin.interface';
@@ -14,6 +14,7 @@ export class AuthController {
     status: 200,
     description: 'Conta de usuário criada com sucesso',
   })
+  @ApiBody({ type: UserLoginDto })
   @Post('/login')
   async login(@Body() loginDto: UserLoginDto): Promise<Ilogin> {
     const user = await this.authService.validateUser(loginDto);

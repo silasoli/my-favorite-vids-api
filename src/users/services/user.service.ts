@@ -11,7 +11,7 @@ import { join } from 'path';
 import * as fs from 'fs';
 
 @Injectable()
-export class UsersProfileService {
+export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,

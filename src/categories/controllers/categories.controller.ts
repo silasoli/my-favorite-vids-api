@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiTags,
   ApiOperation,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { RoleGuard } from '../../roles/guards/role.guard';
@@ -43,6 +44,7 @@ export class CategoriesController {
     status: 409,
     description: 'Valor de campo já em uso.',
   })
+  @ApiBody({ type: CreateCategoryDto })
   @Post()
   @Role([Roles.ADMIN])
   public async create(
@@ -95,6 +97,7 @@ export class CategoriesController {
     status: 409,
     description: 'Valor de campo já em uso.',
   })
+  @ApiBody({ type: UpdateCategoryDto })
   @Patch(':id')
   @Role([Roles.ADMIN])
   public async update(
