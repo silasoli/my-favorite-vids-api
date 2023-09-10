@@ -5,9 +5,9 @@ import Roles from '../../roles/enums/role.enum';
 
 export class UserResponseDto {
   constructor(user: User) {
-    const { _id, username, email, privy, active, roles } = user;
+    const { _id, username, email, privy, roles } = user;
 
-    return { _id: String(_id), username, email, privy, active, roles };
+    return { _id: String(_id), username, email, privy, roles };
   }
 
   @ApiProperty({ required: true })
@@ -28,7 +28,4 @@ export class UserResponseDto {
 
   @ApiProperty({ required: true })
   privy: boolean;
-
-  @ApiProperty({ required: true })
-  active: boolean;
 }

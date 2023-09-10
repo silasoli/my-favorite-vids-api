@@ -17,6 +17,7 @@ import {
   ApiResponse,
   ApiTags,
   ApiOperation,
+  ApiBody,
 } from '@nestjs/swagger';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { QueryWithHelpers } from 'mongoose';
@@ -39,6 +40,7 @@ export class UsersController {
     description: 'Conta de usuário criada com sucesso',
     type: UserResponseDto,
   })
+  @ApiBody({ type: CreateUserDto })
   @Post()
   @Role([Roles.ADMIN])
   public async create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
@@ -75,6 +77,7 @@ export class UsersController {
     description: 'Editar conta de usuário com sucesso',
     type: UserResponseDto,
   })
+  @ApiBody({ type: UpdateUserDto })
   @Patch(':id')
   @Role([Roles.ADMIN])
   public async update(
