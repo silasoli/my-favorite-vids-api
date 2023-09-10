@@ -3,8 +3,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateCategoryDto } from '../dto/create-category.dto';
-import { UpdateCategoryDto } from '../dto/update-category.dto';
+import { CreateCategoryToUserDto } from '../dto/create-category.dto';
+import { UpdateCategoryOfUserDto } from '../dto/update-category.dto';
 import { Category, CategoryDocument } from '../schemas/category.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -20,12 +20,15 @@ export class UserCategoriesService {
   ) {}
 
   public async createToUser(
-    dto: CreateCategoryDto,
+    user_id: string,
+    dto: CreateCategoryToUserDto,
   ): Promise<CategoryResponseDto> {
-    return this.categoriesService.create(dto);
+    return this.categoriesService.create({ ...dto, user_id });
   }
 
-  public async findAllOfUser(user_id: string): Promise<CategoryResponseDto[]> {
+  public async findAllCategoriesOfUser(
+    user_id: string,
+  ): Promise<CategoryResponseDto[]> {
     const categories = await this.categoryModel.find({ user_id });
 
     return categories.map((category) => new CategoryResponseDto(category));
@@ -42,7 +45,7 @@ export class UserCategoriesService {
     return category;
   }
 
-  public async findOne(
+  public async findOneCategoryOfUser(
     _id: string,
     user_id: string,
   ): Promise<CategoryResponseDto> {
@@ -51,10 +54,10 @@ export class UserCategoriesService {
     return new CategoryResponseDto(category);
   }
 
-  public async update(
+  public async updateCategoryOfUser(
     _id: string,
     user_id: string,
-    dto: UpdateCategoryDto,
+    dto: UpdateCategoryOfUserDto,
   ): Promise<CategoryResponseDto> {
     const category = await this.findCategoryByIDOfUser(_id, user_id);
 
@@ -70,7 +73,10 @@ export class UserCategoriesService {
     );
   }
 
-  public async remove(_id: string, user_id: string): Promise<void> {
+  public async removeCategoryOfUser(
+    _id: string,
+    user_id: string,
+  ): Promise<void> {
     const category = await this.findCategoryByIDOfUser(_id, user_id);
 
     if (!category.privy)

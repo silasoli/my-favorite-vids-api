@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { IsBoolean, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -18,3 +18,7 @@ export class CreateCategoryDto {
   @IsNotEmpty({ message: 'É necessário informar a privacidade da categoria.' })
   privy: boolean;
 }
+
+export class CreateCategoryToUserDto extends OmitType(CreateCategoryDto, [
+  'user_id',
+] as const) {}
