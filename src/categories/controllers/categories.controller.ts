@@ -7,17 +7,24 @@ import {
   Param,
   Delete,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiResponse,
+  ApiTags,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { RoleGuard } from '../../roles/guards/role.guard';
 import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { CategoryResponseDto } from '../dto/category-response.dto';
+
 
 @ApiBearerAuth()
 @ApiTags('Categories')
@@ -26,6 +33,16 @@ import { CategoryResponseDto } from '../dto/category-response.dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @ApiOperation({ summary: 'Criar categoria.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categoria criada com sucesso.',
+    type: CategoryResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Valor de campo já em uso.',
+  })
   @Post()
   @Role([Roles.ADMIN])
   public async create(
@@ -34,12 +51,28 @@ export class CategoriesController {
     return this.categoriesService.create(dto);
   }
 
+  @ApiOperation({ summary: 'Obter categorias.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categorias retornadas com sucesso.',
+    type: [CategoryResponseDto],
+  })
   @Get()
   @Role([Roles.ADMIN])
   public async findAll(): Promise<CategoryResponseDto[]> {
     return this.categoriesService.findAll();
   }
 
+  @ApiOperation({ summary: 'Obter categoria.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categoria retornada com sucesso.',
+    type: CategoryResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoria não encontrada.',
+  })
   @Get(':id')
   @Role([Roles.ADMIN])
   public async findOne(
@@ -48,6 +81,20 @@ export class CategoriesController {
     return this.categoriesService.findOne(params.id);
   }
 
+  @ApiOperation({ summary: 'Atualizar categoria.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Categoria atualizada com sucesso.',
+    type: CategoryResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoria não encontrada.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Valor de campo já em uso.',
+  })
   @Patch(':id')
   @Role([Roles.ADMIN])
   public async update(
@@ -57,6 +104,16 @@ export class CategoriesController {
     return this.categoriesService.update(params.id, dto);
   }
 
+  @ApiOperation({ summary: 'Deletar categoria.' })
+  @ApiResponse({
+    status: 204,
+    description: 'Categoria deletada com sucesso.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoria não encontrada.',
+  })
+  @HttpCode(204)
   @Delete(':id')
   @Role([Roles.ADMIN])
   public async remove(@Param() params: IDQueryDTO): Promise<void> {
