@@ -11,7 +11,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  // app.useGlobalFilters(new AllExceptionsFilter(), new MongoExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(), new MongoExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
@@ -34,7 +34,7 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
       tagsSorter: 'alpha',
-      operationsSorter: 'method',
+      operationsSorter:'',
     },
     customCssUrl:
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
