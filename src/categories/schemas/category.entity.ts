@@ -9,7 +9,7 @@ export class Category {
   _id?: mongoose.ObjectId | string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
-  user: User;
+  user_id: User;
 
   @Prop({ required: true, unique: true, lowercase: true })
   name: string;
@@ -19,9 +19,6 @@ export class Category {
 
   @Prop({ default: () => new Date() })
   createdAt: Date;
-
-  @Prop({ default: true })
-  active?: boolean;
 }
 
 
