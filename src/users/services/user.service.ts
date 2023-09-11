@@ -41,7 +41,7 @@ export class UserService {
 
     if (!passMatch) throw new UnauthorizedException('Senha incorreta.');
 
-    this.userModel.deleteOne({ _id });
+    await this.userModel.deleteOne({ _id });
   }
 
   private async getProfilePictureURL(_id: string): Promise<string | null> {
