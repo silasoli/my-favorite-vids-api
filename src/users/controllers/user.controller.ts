@@ -20,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
 import { UserRequest } from '../../auth/decorators/user-request.decorator';
-import { UsersProfileService } from '../services/users-profile.service';
 import { ProfileUserResponseDto } from '../dto/profile-user-response.dto';
 import { UpdateProfileUserDto } from '../dto/update-profile-user.dto';
 import { DeleteUserDto } from '../dto/delete-user.dto';
@@ -33,6 +32,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
 import { diskStorage } from 'multer';
 import { Observable, of } from 'rxjs';
+import { UserService } from '../services/user.service';
 
 export const storage = diskStorage({
   destination: './uploads/profile-picture/',
@@ -50,11 +50,11 @@ export const storage = diskStorage({
 });
 
 @ApiBearerAuth()
-@ApiTags('Profile')
-@Controller('profile')
+@ApiTags('User')
+@Controller('user')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
-export class UsersProfileController {
-  constructor(private readonly usersProfileService: UsersProfileService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Obter perfil do usuário' })
   @ApiResponse({
@@ -62,12 +62,12 @@ export class UsersProfileController {
     description: 'Perfil do usuário retornado com sucesso',
     type: ProfileUserResponseDto,
   })
-  @Get('/user')
+  @Get()
   @Role([Roles.USER])
   public async findProfile(
     @UserRequest() user: UserRequestDTO,
   ): Promise<ProfileUserResponseDto> {
-    return this.usersProfileService.findProfile(user._id);
+    return this.userService.findProfile(user._id);
   }
 
   @ApiOperation({ summary: 'Atualizar perfil do usuário' })
@@ -77,13 +77,13 @@ export class UsersProfileController {
     type: ProfileUserResponseDto,
   })
   @ApiBody({ type: UpdateProfileUserDto })
-  @Patch('/user')
+  @Patch()
   @Role([Roles.USER])
   public async updateProfile(
     @UserRequest() user: UserRequestDTO,
     @Body() dto: UpdateProfileUserDto,
   ): Promise<ProfileUserResponseDto> {
-    return this.usersProfileService.updateProfile(user._id, dto);
+    return this.userService.updateProfile(user._id, dto);
   }
 
   @ApiOperation({ summary: 'Deletar conta do usuário' })
@@ -97,13 +97,13 @@ export class UsersProfileController {
   })
   @ApiBody({ type: DeleteUserDto })
   @HttpCode(204)
-  @Delete('/user')
+  @Delete()
   @Role([Roles.USER])
   public async remove(
     @UserRequest() user: UserRequestDTO,
     @Body() dto: DeleteUserDto,
   ): Promise<void> {
-    return this.usersProfileService.deleteUser(user._id, dto);
+    return this.userService.deleteUser(user._id, dto);
   }
 
   @ApiOperation({ summary: 'Modificar foto de perfil do usuário' })
@@ -116,7 +116,7 @@ export class UsersProfileController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Patch('/user/picture')
+  @Patch('/picture')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UploadProfilePictureDto })
   @UseInterceptors(FileInterceptor('file', { storage }))
@@ -124,7 +124,7 @@ export class UsersProfileController {
     @UserRequest() user: UserRequestDTO,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<string | null> {
-    return this.usersProfileService.updateProfilePicture(user._id, { file });
+    return this.userService.updateProfilePicture(user._id, { file });
   }
 
   @ApiOperation({ summary: 'Buscar foto de perfil do usuário' })
@@ -137,12 +137,12 @@ export class UsersProfileController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Get('/user/picture')
+  @Get('/picture')
   public async getProfilePicture<T>(
     @UserRequest() user: UserRequestDTO,
     @Res() res,
   ): Promise<Observable<T>> {
-    const fileUrl = await this.usersProfileService.getProfilePicture(user._id);
+    const fileUrl = await this.userService.getProfilePicture(user._id);
 
     return of(res.sendFile(fileUrl));
   }
