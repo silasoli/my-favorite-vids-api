@@ -83,7 +83,7 @@ export class UsersController {
   public async update(
     @Param() params: IDQueryDTO,
     @Body() dto: UpdateUserDto,
-  ): Promise<QueryWithHelpers<unknown, unknown>> {
+  ): Promise<UserResponseDto> {
     return this.usersService.update(params.id, dto);
   }
 

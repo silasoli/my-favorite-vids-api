@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { User, UserDocument } from '../schemas/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Model, QueryWithHelpers } from 'mongoose';
+import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -59,20 +59,25 @@ export class UsersService {
 
   public async findRolesOfUser(_id: string): Promise<Role[]> {
     const user = await this.userModel.findOne({ _id }, ['roles']);
+
+    if (!user) throw new NotFoundException('User not found');
+
     return user.roles;
   }
 
   public async update(
     _id: string,
     dto: UpdateUserDto,
-  ): Promise<QueryWithHelpers<unknown, unknown>> {
+  ): Promise<UserResponseDto> {
     await this.findUserByID(_id);
 
     const rawData = { ...dto };
 
     await this.transformBody(rawData);
 
-    return this.userModel.updateOne({ _id }, rawData);
+    await this.userModel.updateOne({ _id }, rawData);
+
+    return this.findOne(_id);
   }
 
   public async remove(_id: string): Promise<void> {
