@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import {
   IsMongoId,
   IsNotEmpty,
@@ -35,3 +35,7 @@ export class CreateVideoDto {
   @IsNotEmpty({ message: 'É necessário informar a privacidade do video.' })
   privy: boolean;
 }
+
+export class UserCreateVideoDto extends OmitType(CreateVideoDto, [
+  'user_id',
+] as const) {}

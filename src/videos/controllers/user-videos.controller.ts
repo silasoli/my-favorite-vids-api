@@ -9,8 +9,8 @@ import {
   UseGuards,
   HttpCode,
 } from '@nestjs/common';
-import { CreateVideoDto } from '../dto/create-video.dto';
-import { UpdateVideoDto } from '../dto/update-video.dto';
+import { UserCreateVideoDto } from '../dto/create-video.dto';
+import { UserUpdateVideoDto } from '../dto/update-video.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -23,15 +23,17 @@ import { RoleGuard } from '../../roles/guards/role.guard';
 import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
-import { AdminVideosService } from '../services/admin-videos.service';
 import { VideoResponseDto } from '../dto/response-video.dto';
+import { UserRequest } from '../../auth/decorators/user-request.decorator';
+import { UserRequestDTO } from '../../common/dtos/user-request.dto';
+import { UserVideosService } from '../services/user-videos.service';
 
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('user/videos')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class UserVideosController {
-  constructor(private readonly adminVideosService: AdminVideosService) {}
+  constructor(private readonly userVideosService: UserVideosService) {}
 
   @ApiOperation({ summary: 'Criar video para usuário' })
   @ApiResponse({
@@ -39,11 +41,14 @@ export class UserVideosController {
     description: 'Video do usuário criado com sucesso',
     type: VideoResponseDto,
   })
-  @ApiBody({ type: CreateVideoDto })
+  @ApiBody({ type: UserCreateVideoDto })
   @Post()
   @Role([Roles.USER])
-  create(@Body() dto: CreateVideoDto): Promise<VideoResponseDto> {
-    return this.adminVideosService.create(dto);
+  create(
+    @UserRequest() user: UserRequestDTO,
+    @Body() dto: UserCreateVideoDto,
+  ): Promise<VideoResponseDto> {
+    return this.userVideosService.createToUser(user._id, dto);
   }
 
   @ApiOperation({ summary: 'Obter listagem de videos de um usuário' })
@@ -54,8 +59,8 @@ export class UserVideosController {
   })
   @Get()
   @Role([Roles.USER])
-  findAll(): Promise<VideoResponseDto[]> {
-    return this.adminVideosService.findAll();
+  findAll(@UserRequest() user: UserRequestDTO): Promise<VideoResponseDto[]> {
+    return this.userVideosService.findAllVideosOfUser(user._id);
   }
 
   @ApiOperation({ summary: 'Obter um video do usuário' })
@@ -66,8 +71,11 @@ export class UserVideosController {
   })
   @Get(':id')
   @Role([Roles.USER])
-  findOne(@Param() params: IDQueryDTO): Promise<VideoResponseDto> {
-    return this.adminVideosService.findOne(params.id);
+  findOne(
+    @Param() params: IDQueryDTO,
+    @UserRequest() user: UserRequestDTO,
+  ): Promise<VideoResponseDto> {
+    return this.userVideosService.findOneVideoOfUser(params.id, user._id);
   }
 
   @ApiOperation({ summary: 'Editar video do usuário' })
@@ -76,14 +84,15 @@ export class UserVideosController {
     description: 'Editar video do usuário com sucesso',
     type: VideoResponseDto,
   })
-  @ApiBody({ type: UpdateVideoDto })
+  @ApiBody({ type: UserUpdateVideoDto })
   @Patch(':id')
   @Role([Roles.USER])
   update(
     @Param() params: IDQueryDTO,
-    @Body() updateVideoDto: UpdateVideoDto,
+    @UserRequest() user: UserRequestDTO,
+    @Body() dto: UserUpdateVideoDto,
   ): Promise<VideoResponseDto> {
-    return this.adminVideosService.update(params.id, updateVideoDto);
+    return this.userVideosService.updateVideoOfUser(params.id, user._id, dto);
   }
 
   @ApiOperation({ summary: 'Deletar video do usuário' })
@@ -94,7 +103,10 @@ export class UserVideosController {
   @HttpCode(204)
   @Delete(':id')
   @Role([Roles.USER])
-  remove(@Param() params: IDQueryDTO): Promise<void> {
-    return this.adminVideosService.remove(params.id);
+  remove(
+    @Param() params: IDQueryDTO,
+    @UserRequest() user: UserRequestDTO,
+  ): Promise<void> {
+    return this.userVideosService.remove(params.id, user._id);
   }
 }

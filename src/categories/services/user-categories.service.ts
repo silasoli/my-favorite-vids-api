@@ -66,7 +66,7 @@ export class UserCategoriesService {
         'Você não pode modificar a privacidade de uma Categoria Pública',
       );
 
-    await this.categoryModel.updateOne({ _id }, dto);
+    await this.categoryModel.updateOne({ _id, user_id }, dto);
 
     return new CategoryResponseDto(
       await this.findCategoryByIDOfUser(_id, user_id),
