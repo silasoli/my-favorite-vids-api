@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserCreateVideoDto } from '../dto/create-video.dto';
 import { UserUpdateVideoDto } from '../dto/update-video.dto';
 import { Video, VideoDocument } from '../entities/video.entity';
@@ -13,10 +17,19 @@ export class UserVideosService {
     private videoModel: Model<VideoDocument>,
   ) {}
 
+  async validateCreate(user_id: string, title: string): Promise<void> {
+    const existingVideo = await this.videoModel.findOne({ user_id, title });
+
+    if (existingVideo)
+      throw new ConflictException('Você já cadastrou um video com esse titulo');
+  }
+
   public async createToUser(
     user_id: string,
     dto: UserCreateVideoDto,
   ): Promise<VideoResponseDto> {
+    await this.validateCreate(user_id, dto.title);
+
     const created = await this.videoModel.create({ ...dto, user_id });
 
     return new VideoResponseDto(created);

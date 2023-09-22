@@ -1,4 +1,5 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsMongoId,
   IsNotEmpty,
@@ -17,6 +18,7 @@ export class CreateVideoDto {
   @ApiProperty({ required: true })
   @IsString({ message: 'O Título do video deve ser uma string.' })
   @IsNotEmpty({ message: 'É necessário informar o título do video.' })
+  @Transform(({ value }) => value.toLowerCase())
   title: string;
 
   @ApiProperty({ required: false })

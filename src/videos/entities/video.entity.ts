@@ -16,7 +16,7 @@ export class Video {
   @Prop({ required: false, lowercase: true, default: null })
   description: string;
 
-  @Prop({ required: true, lowercase: true })
+  @Prop({ required: true })
   url: string;
 
   @Prop({ required: true, default: true })
