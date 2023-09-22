@@ -77,11 +77,16 @@ describe('UsersService', () => {
             }),
             findById: jest.fn().mockImplementation((_idSearch: string) => {
               if (_idSearch === _id) return { ...userDB, _id };
-
               if (_idSearch === updatedId) return { ...userUpdated, _id };
-
               return null;
             }),
+            findByEmail: jest.fn().mockImplementation((emailSearch) => {
+              return {...userDB, email: emailSearch};
+            }),
+            findByName: jest.fn().mockImplementation((usernameSearch) => {
+              return {...userDB, username: usernameSearch};
+            }),
+            
             find: jest.fn().mockImplementation(() => {
               return usersList;
             }),
@@ -189,6 +194,22 @@ describe('UsersService', () => {
       await expect(usersService.remove('123456')).rejects.toThrowError(
         'User not found',
       );
+    });
+
+    describe('findByEmail', () => {
+      it('should find a user by email', async () => {
+        const email = faker.internet.email();
+        const userByEmail = await usersService.findByEmail(email);
+        expect(userByEmail.email).toBe(email);        
+      });
+    });
+    
+    describe('findByName', () => {
+      it('should find a user by username', async () => {
+        const username = faker.internet.userName();
+        const userByName = await usersService.findByName(username);
+        expect(userByName.username).toBe(username);
+      });
     });
   });
 });
