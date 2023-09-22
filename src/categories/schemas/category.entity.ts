@@ -21,5 +21,4 @@ export class Category {
   createdAt: Date;
 }
 
-
 export const CategorySchema = SchemaFactory.createForClass(Category);
