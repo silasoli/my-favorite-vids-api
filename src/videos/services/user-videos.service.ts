@@ -63,11 +63,29 @@ export class UserVideosService {
     return new VideoResponseDto(category);
   }
 
+  async validateUpdate(
+    _id: string,
+    user_id: string,
+    title: string,
+  ): Promise<void> {
+    const existingVideo = await this.videoModel.findOne({
+      _id: { $ne: _id },
+      user_id,
+      title,
+    });
+
+    if (existingVideo) {
+      throw new ConflictException('Você já possui um vídeo com este título.');
+    }
+  }
+
   public async updateVideoOfUser(
     _id: string,
     user_id: string,
     dto: UserUpdateVideoDto,
   ): Promise<VideoResponseDto> {
+    await this.validateUpdate(_id, user_id, dto.title);
+
     await this.findVideoByIDOfUser(_id, user_id);
 
     await this.videoModel.updateOne({ _id, user_id }, dto);
