@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateVideoDto } from '../dto/create-video.dto';
 import { UpdateVideoDto } from '../dto/update-video.dto';
 import { Video, VideoDocument } from '../entities/video.entity';
@@ -13,7 +17,18 @@ export class AdminVideosService {
     private videoModel: Model<VideoDocument>,
   ) {}
 
+  async validateCreate(user_id: string, title: string): Promise<void> {
+    const existingVideo = await this.videoModel.findOne({ user_id, title });
+
+    if (existingVideo)
+      throw new ConflictException(
+        'Esse usuario já tem um vídeo cadastrado com esse titulo.',
+      );
+  }
+
   public async create(dto: CreateVideoDto): Promise<VideoResponseDto> {
+    await this.validateCreate(dto.user_id, dto.title);
+
     const created = await this.videoModel.create(dto);
 
     return new VideoResponseDto(created);
@@ -27,7 +42,7 @@ export class AdminVideosService {
   private async findVideoByID(_id: string): Promise<Video> {
     const video = await this.videoModel.findById(_id);
 
-    if (!video) throw new NotFoundException('Video not found');
+    if (!video) throw new NotFoundException('Vídeo não encontrado.');
 
     return video;
   }
@@ -37,10 +52,29 @@ export class AdminVideosService {
     return new VideoResponseDto(video);
   }
 
+  async validateUpdate(
+    _id: string,
+    user_id: string,
+    title: string,
+  ): Promise<void> {
+    const existingVideo = await this.videoModel.findOne({
+      _id: { $ne: _id },
+      user_id,
+      title,
+    });
+
+    if (existingVideo)
+      throw new ConflictException(
+        'Esse usuario já tem um vídeo cadastrado com esse titulo.',
+      );
+  }
+
   public async update(
     _id: string,
     dto: UpdateVideoDto,
   ): Promise<VideoResponseDto> {
+    await this.validateUpdate(_id, dto.user_id, dto.title);
+
     await this.findVideoByID(_id);
 
     const rawData = { ...dto };

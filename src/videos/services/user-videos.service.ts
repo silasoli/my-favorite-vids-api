@@ -21,7 +21,7 @@ export class UserVideosService {
     const existingVideo = await this.videoModel.findOne({ user_id, title });
 
     if (existingVideo)
-      throw new ConflictException('Você já cadastrou um video com esse titulo');
+      throw new ConflictException('Você já cadastrou um vídeo com esse titulo.');
   }
 
   public async createToUser(
@@ -49,7 +49,7 @@ export class UserVideosService {
   ): Promise<Video> {
     const video = await this.videoModel.findOne({ _id, user_id });
 
-    if (!video) throw new NotFoundException('Video não encontrada');
+    if (!video) throw new NotFoundException('Vídeo não encontrado.');
 
     return video;
   }
@@ -75,7 +75,7 @@ export class UserVideosService {
     });
 
     if (existingVideo) {
-      throw new ConflictException('Você já possui um vídeo com este título.');
+      throw new ConflictException('Você já cadastrou um vídeo com esse titulo.');
     }
   }
 
