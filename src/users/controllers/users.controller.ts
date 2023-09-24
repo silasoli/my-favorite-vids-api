@@ -20,7 +20,6 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { AuthUserJwtGuard } from '../../auth/guards/auth-user-jwt.guard';
-import { QueryWithHelpers } from 'mongoose';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
