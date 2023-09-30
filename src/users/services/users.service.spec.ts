@@ -80,13 +80,8 @@ describe('UsersService', () => {
               if (_idSearch === updatedId) return { ...userUpdated, _id };
               return null;
             }),
-            findByEmail: jest.fn().mockImplementation((emailSearch) => {
-              return {...userDB, email: emailSearch};
-            }),
-            findByName: jest.fn().mockImplementation((usernameSearch) => {
-              return {...userDB, username: usernameSearch};
-            }),
-            
+            findByEmail: jest.fn().mockResolvedValue(null),
+            findByName: jest.fn().mockResolvedValue(null),            
             find: jest.fn().mockImplementation(() => {
               return usersList;
             }),
@@ -195,21 +190,22 @@ describe('UsersService', () => {
         'User not found',
       );
     });
-
-    describe('findByEmail', () => {
-      it('should find a user by email', async () => {
-        const email = faker.internet.email();
-        const userByEmail = await usersService.findByEmail(email);
-        expect(userByEmail.email).toBe(email);        
-      });
+  });
+  describe('findByEmail', () => {
+    it('should find a user by email', async () => {
+      const email = faker.internet.email();
+      (userModel as any).findByEmail.mockResolvedValue({ ...userDB, email });
+      const userByEmail = await usersService.findByEmail(email);
+      expect(userByEmail.email).toBe(email);
     });
-    
-    describe('findByName', () => {
-      it('should find a user by username', async () => {
-        const username = faker.internet.userName();
-        const userByName = await usersService.findByName(username);
-        expect(userByName.username).toBe(username);
-      });
+  });
+  
+  describe('findByName', () => {
+    it('should find a user by username', async () => {
+      const username = faker.internet.userName(); 
+      (userModel as any).findByName.mockResolvedValue({ ...userDB, username });
+      const userByName = await usersService.findByName(username);
+      expect(userByName.username).toBe(username);
     });
   });
 });
