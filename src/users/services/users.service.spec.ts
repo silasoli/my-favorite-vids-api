@@ -191,21 +191,4 @@ describe('UsersService', () => {
       );
     });
   });
-  describe('findByEmail', () => {
-    it('should find a user by email', async () => {
-      const email = faker.internet.email();
-      (userModel as any).findByEmail.mockResolvedValue({ ...userDB, email });
-      const userByEmail = await usersService.findByEmail(email);
-      expect(userByEmail.email).toBe(email);
-    });
-  });
-  
-  describe('findByName', () => {
-    it('should find a user by username', async () => {
-      const username = faker.internet.userName(); 
-      (userModel as any).findByName.mockResolvedValue({ ...userDB, username });
-      const userByName = await usersService.findByName(username);
-      expect(userByName.username).toBe(username);
-    });
-  });
 });

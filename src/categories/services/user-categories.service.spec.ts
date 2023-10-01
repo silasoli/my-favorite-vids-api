@@ -38,28 +38,32 @@ describe('UserCategoriesService', () => {
   let categoryModel: Model<CategoryDocument>;
   let categoriesService: CategoriesService;
 
-
   const mockCategoryModel = {
-    create: jest.fn().mockResolvedValue({
-      _id: faker.database.mongodbObjectId(),
-      ...createCategoryToUserDto,
-      user_id: userId,
-      createdAt: new Date(),
-    }),
     findOne: jest.fn().mockImplementation((query) => {
-      if (query._id === _id && query.user_id === userId) return { ...categoryDB, _id };
-      if (query._id === updatedId && query.user_id === userId) return { ...categoryDB, ...updateCategoryOfUserDto, _id };
+      if (query._id === _id && query.user_id === userId)
+        return { ...categoryDB, _id };
+      if (query._id === updatedId && query.user_id === userId)
+        return { ...categoryDB, ...updateCategoryOfUserDto, _id };
       return null;
     }),
     find: jest.fn().mockResolvedValue(categoriesList),
-    updateOne: jest.fn().mockImplementation((query, dto: UpdateCategoryOfUserDto) => {
-      return { ...categoryDB, ...dto };
-    }),
+    updateOne: jest
+      .fn()
+      .mockImplementation((query, dto: UpdateCategoryOfUserDto) => {
+        return { ...categoryDB, ...dto };
+      }),
     deleteOne: jest.fn().mockResolvedValue({ n: 1, ok: 1, deletedCount: 1 }),
   };
 
   const mockCategoriesService = {
-    create: jest.fn(),
+    create: jest.fn().mockImplementation((dto) => {
+      return {
+        _id: faker.database.mongodbObjectId(),
+        ...dto,
+        user_id: userId,
+        createdAt: new Date(),
+      };
+    }),
   };
 
   beforeEach(async () => {
@@ -68,7 +72,7 @@ describe('UserCategoriesService', () => {
         UserCategoriesService,
         {
           provide: CategoriesService,
-          useValue: mockCategoriesService
+          useValue: mockCategoriesService,
         },
         {
           provide: getModelToken(Category.name),
@@ -77,8 +81,12 @@ describe('UserCategoriesService', () => {
       ],
     }).compile();
 
-    userCategoriesService = module.get<UserCategoriesService>(UserCategoriesService);
-    categoryModel = module.get<Model<CategoryDocument>>(getModelToken(Category.name));
+    userCategoriesService = module.get<UserCategoriesService>(
+      UserCategoriesService,
+    );
+    categoryModel = module.get<Model<CategoryDocument>>(
+      getModelToken(Category.name),
+    );
     categoriesService = module.get<CategoriesService>(CategoriesService);
   });
 
@@ -90,18 +98,24 @@ describe('UserCategoriesService', () => {
 
   describe('createToUser', () => {
     it('should create a category for a user', async () => {
-      const createdCategory = await userCategoriesService.createToUser(userId, createCategoryToUserDto);
-      console.log(createdCategory.name, createCategoryToUserDto.name)
-      //expect(createdCategory).toHaveProperty('name', createCategoryToUserDto.name);
-      //expect(createdCategory.name).toBe(createCategoryToUserDto.name);
+      const createdCategory = await userCategoriesService.createToUser(
+        userId,
+        createCategoryToUserDto,
+      );
+
+      expect(createdCategory.name).toBe(createCategoryToUserDto.name);
       expect(createdCategory.privy).toBe(createCategoryToUserDto.privy);
-      expect(categoriesService.create).toHaveBeenCalledWith({ ...createCategoryToUserDto, user_id: userId });
-    });    
+      expect(categoriesService.create).toHaveBeenCalledWith({
+        ...createCategoryToUserDto,
+        user_id: userId,
+      });
+    });
   });
 
   describe('findAllCategoriesOfUser', () => {
     it('should find all categories of a user', async () => {
-      const userCategories = await userCategoriesService.findAllCategoriesOfUser(userId);
+      const userCategories =
+        await userCategoriesService.findAllCategoriesOfUser(userId);
       expect(userCategories[0].name).toBe(categoriesList[0].name);
       expect(categoryModel.find).toHaveBeenCalledWith({ user_id: userId });
     });
@@ -109,52 +123,88 @@ describe('UserCategoriesService', () => {
 
   describe('findOneCategoryOfUser', () => {
     it('should find a specific category of a user', async () => {
-      const category = await userCategoriesService.findOneCategoryOfUser(_id, userId);
+      const category = await userCategoriesService.findOneCategoryOfUser(
+        _id,
+        userId,
+      );
       expect(category.name).toBe(categoryDB.name);
-      expect(categoryModel.findOne).toHaveBeenCalledWith({ _id, user_id: userId });
+      expect(categoryModel.findOne).toHaveBeenCalledWith({
+        _id,
+        user_id: userId,
+      });
     });
 
     it('should throw NotFoundException if category is not found', async () => {
-      await expect(userCategoriesService.findOneCategoryOfUser('nonexistentId', userId)).rejects.toThrow(NotFoundException);
+      await expect(
+        userCategoriesService.findOneCategoryOfUser('nonexistentId', userId),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('updateCategoryOfUser', () => {
     it('should update a specific category of a user', async () => {
-      const updatedCategory = await userCategoriesService.updateCategoryOfUser(updatedId, userId, updateCategoryOfUserDto);
+      const updatedCategory = await userCategoriesService.updateCategoryOfUser(
+        updatedId,
+        userId,
+        updateCategoryOfUserDto,
+      );
+
       expect(updatedCategory.name).toBe(updateCategoryOfUserDto.name);
-      expect(categoryModel.updateOne).toHaveBeenCalledWith({ _id: updatedId }, updateCategoryOfUserDto);
+
+      expect(categoryModel.updateOne).toHaveBeenCalledWith(
+        { _id: updatedId },
+        updateCategoryOfUserDto,
+      );
     });
 
     it('should not allow modifying the privacy of a public category', async () => {
-      const publicCategoryDto = { ...updateCategoryOfUserDto, privy: false };
+      const publicCategoryDto = { ...updateCategoryOfUserDto, privy: true };
       const publicCategory = { ...categoryDB, privy: false };
-      mockCategoryModel.findOne.mockResolvedValueOnce(publicCategory); 
-    
-      await expect(userCategoriesService.updateCategoryOfUser(updatedId, userId, publicCategoryDto)).rejects.toThrow(ForbiddenException);
+      mockCategoryModel.findOne.mockResolvedValueOnce(publicCategory);
+
+      await expect(
+        userCategoriesService.updateCategoryOfUser(
+          updatedId,
+          userId,
+          publicCategoryDto,
+        ),
+      ).rejects.toThrow(ForbiddenException);
     });
-    
 
     it('should throw NotFoundException if category is not found', async () => {
-      await expect(userCategoriesService.updateCategoryOfUser('nonexistentId', userId, updateCategoryOfUserDto)).rejects.toThrow(NotFoundException);
+      await expect(
+        userCategoriesService.updateCategoryOfUser(
+          'nonexistentId',
+          userId,
+          updateCategoryOfUserDto,
+        ),
+      ).rejects.toThrow(NotFoundException);
     });
-    
   });
 
   describe('removeCategoryOfUser', () => {
     it('should remove a category of a user', async () => {
+      const privateCategory = { ...categoryDB, privy: true };
+      mockCategoryModel.findOne.mockResolvedValueOnce(privateCategory);
+
       await userCategoriesService.removeCategoryOfUser(_id, userId);
-      expect(categoryModel.deleteOne).toHaveBeenCalledWith({ _id, user_id: userId });
+      expect(categoryModel.deleteOne).toHaveBeenCalledWith({
+        _id,
+        user_id: userId,
+      });
     });
 
     it('should not allow removing a public category', async () => {
       const publicCategory = { ...categoryDB, privy: false };
-      await expect(userCategoriesService.removeCategoryOfUser(publicCategory._id, userId)).rejects.toThrow(NotFoundException);
+      await expect(
+        userCategoriesService.removeCategoryOfUser(publicCategory._id, userId),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw NotFoundException if category is not found', async () => {
-      await expect(userCategoriesService.removeCategoryOfUser('nonexistentId', userId)).rejects.toThrow(NotFoundException);
+      await expect(
+        userCategoriesService.removeCategoryOfUser('nonexistentId', userId),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 });
-

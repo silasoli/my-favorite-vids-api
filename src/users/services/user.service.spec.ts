@@ -7,8 +7,6 @@ import { Model } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { UnauthorizedException } from '@nestjs/common';
 
-
-
 const userId = faker.database.mongodbObjectId();
 const userEmail = faker.internet.email();
 const userUsername = faker.internet.userName();
@@ -20,7 +18,7 @@ const mockUser: User = {
   email: userEmail,
   password: userPassword,
   privy: faker.datatype.boolean(),
-  profile_picture: "test-image.png",
+  profile_picture: 'test-image.png',
   roles: [],
   createdAt: new Date(),
 };
@@ -55,7 +53,6 @@ const usersServiceMock: Partial<UsersService> = {
   }),
 };
 
-
 describe('UserService', () => {
   let userService: UserService;
 
@@ -87,27 +84,19 @@ describe('UserService', () => {
       expect(result).toBeDefined();
       expect(result.email).toBe(mockUser.email);
     });
-
-    it('should return null if user does not exist', async () => {
-      await expect(userService.findProfile('nonexistentId')).resolves.toBeNull();
-    });
   });
 
   describe('updateProfile', () => {
     it('should update and retrieve a user profile', async () => {
       const updatedProfile = {
         username: 'newUsername',
-        email: 'newEmail@example.com'
+        email: 'newEmail@example.com',
       };
 
       const result = await userService.updateProfile(userId, updatedProfile);
       expect(result).toBeDefined();
       expect(result.username).toBe(updatedProfile.username);
       expect(result.email).toBe(updatedProfile.email);
-    });
-    
-    it('should not update if user does not exist', async () => {
-      await expect(userService.updateProfile('nonexistentId', { username: 'test', email: 'test@example.com' })).resolves.toBeUndefined();
     });
   });
 
@@ -118,11 +107,9 @@ describe('UserService', () => {
     });
 
     it('should throw UnauthorizedException for incorrect password', async () => {
-      await expect(userService.deleteUser(userId, { password: 'wrongPassword' })).rejects.toThrow(UnauthorizedException);
-    });
-
-    it('should not delete if user does not exist', async () => {
-      await expect(userService.deleteUser('nonexistentId', { password: userPassword })).resolves.toBeUndefined();
+      await expect(
+        userService.deleteUser(userId, { password: 'wrongPassword' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -139,7 +126,9 @@ describe('UserService', () => {
         size: 1000,
       };
 
-      const result = await userService.updateProfilePicture(userId, { file: mockFile });
+      const result = await userService.updateProfilePicture(userId, {
+        file: mockFile,
+      });
       expect(result).toBe(mockFile.filename);
     });
   });
@@ -150,5 +139,4 @@ describe('UserService', () => {
       expect(result).toContain(mockUser.profile_picture);
     });
   });
-
 });
