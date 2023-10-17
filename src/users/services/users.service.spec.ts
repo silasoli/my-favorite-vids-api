@@ -77,11 +77,11 @@ describe('UsersService', () => {
             }),
             findById: jest.fn().mockImplementation((_idSearch: string) => {
               if (_idSearch === _id) return { ...userDB, _id };
-
               if (_idSearch === updatedId) return { ...userUpdated, _id };
-
               return null;
             }),
+            findByEmail: jest.fn().mockResolvedValue(null),
+            findByName: jest.fn().mockResolvedValue(null),            
             find: jest.fn().mockImplementation(() => {
               return usersList;
             }),
