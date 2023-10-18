@@ -5,12 +5,17 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Video, VideoSchema } from './entities/video.entity';
 import { UserVideosController } from './controllers/user-videos.controller';
 import { UserVideosService } from './services/user-videos.service';
+import { EngineValidationVideosService } from './services/engine-validation-videos.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Video.name, schema: VideoSchema }]),
   ],
   controllers: [AdminVideosController, UserVideosController],
-  providers: [AdminVideosService, UserVideosService],
+  providers: [
+    AdminVideosService,
+    UserVideosService,
+    EngineValidationVideosService,
+  ],
 })
 export class VideosModule {}

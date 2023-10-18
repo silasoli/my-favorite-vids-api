@@ -9,12 +9,14 @@ import { Video, VideoDocument } from '../entities/video.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
+import { EngineValidationVideosService } from './engine-validation-videos.service';
 
 @Injectable()
 export class AdminVideosService {
   constructor(
     @InjectModel(Video.name)
     private videoModel: Model<VideoDocument>,
+    private readonly engineValidationVideosService: EngineValidationVideosService,
   ) {}
 
   async validateCreate(user_id: string, title: string): Promise<void> {
@@ -27,9 +29,11 @@ export class AdminVideosService {
   }
 
   public async create(dto: CreateVideoDto): Promise<VideoResponseDto> {
+    const url = this.engineValidationVideosService.validateURL(dto);
+
     await this.validateCreate(dto.user_id, dto.title);
 
-    const created = await this.videoModel.create(dto);
+    const created = await this.videoModel.create({ url, ...dto });
 
     return new VideoResponseDto(created);
   }

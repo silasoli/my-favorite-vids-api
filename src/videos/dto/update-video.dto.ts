@@ -5,4 +5,6 @@ export class UpdateVideoDto extends PartialType(CreateVideoDto) {}
 
 export class UserUpdateVideoDto extends OmitType(UpdateVideoDto, [
   'user_id',
+  'platform',
+  'url',
 ] as const) {}
