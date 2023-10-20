@@ -1,12 +1,14 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  IsEnum,
   IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
   ValidateIf,
 } from 'class-validator';
+import VideoPlatform from '../enums/video-type.enum';
 
 export class CreateVideoDto {
   @ApiProperty({ required: true })
@@ -20,6 +22,11 @@ export class CreateVideoDto {
   @IsNotEmpty({ message: 'É necessário informar o título do video.' })
   @Transform(({ value }) => value.toLowerCase())
   title: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty({ message: 'É necessário informar a plataforma do video.' })
+  @IsEnum(VideoPlatform, { message: 'Plataforma não encontrada no sistema.' })
+  platform: VideoPlatform;
 
   @ApiProperty({ required: false })
   @IsOptional()
