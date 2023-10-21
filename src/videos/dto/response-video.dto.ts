@@ -3,7 +3,7 @@ import { Video } from '../entities/video.entity';
 
 export class VideoResponseDto {
   constructor(video: Video) {
-    const { _id, url, user_id, title, privy, description } = video;
+    const { _id, url, user_id, title, privy, description, platform } = video;
 
     return {
       _id: String(_id),
@@ -12,6 +12,7 @@ export class VideoResponseDto {
       title,
       description,
       privy,
+      platform
     };
   }
 
@@ -23,6 +24,9 @@ export class VideoResponseDto {
 
   @ApiProperty({ required: true })
   url: string;
+
+  @ApiProperty({ required: true })
+  platform: string;
 
   @ApiProperty({ required: true })
   title: string;
