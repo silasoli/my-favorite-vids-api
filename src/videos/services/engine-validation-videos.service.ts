@@ -3,7 +3,7 @@ import {
   ConflictException,
   Injectable,
 } from '@nestjs/common';
-import { CreateVideoDto } from '../dto/create-video.dto';
+import { CreateVideoDto, UserCreateVideoDto } from '../dto/create-video.dto';
 import VideoPlatform from '../enums/video-type.enum';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class EngineValidationVideosService {
   private shortsURL = 'https://www.youtube.com/embed/';
   private tiktokURL = 'https://www.tiktok.com/embed/v2/';
 
-  public validateURL(dto: CreateVideoDto): string {
+  public validateURL(dto: CreateVideoDto | UserCreateVideoDto): string {
     this.isUrlValidForPlatform(dto);
     const url = this.createUrlByPlatform(dto);
     if (!url || url.includes('undefined'))
@@ -22,7 +22,7 @@ export class EngineValidationVideosService {
     return url;
   }
 
-  private isUrlValidForPlatform(dto: CreateVideoDto) {
+  private isUrlValidForPlatform(dto: CreateVideoDto | UserCreateVideoDto) {
     const { platform, url } = dto;
 
     const isUrlValidForPlatform = {
@@ -40,7 +40,7 @@ export class EngineValidationVideosService {
       );
   }
 
-  private createUrlByPlatform(dto: CreateVideoDto) {
+  private createUrlByPlatform(dto: CreateVideoDto | UserCreateVideoDto) {
     const { platform, url } = dto;
 
     const createURLs = {
