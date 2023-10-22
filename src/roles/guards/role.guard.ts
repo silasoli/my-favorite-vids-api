@@ -34,8 +34,8 @@ export class RoleGuard implements CanActivate {
 
     const verify = await this.roleUtil.userHasRole(userid, requiredActions);
     if (verify) return verify;
-  
-    if (!verify) 
+
+    if (!verify)
       throw new UnauthorizedException('User does not have permission');
   }
 }

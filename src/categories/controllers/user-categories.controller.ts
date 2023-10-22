@@ -29,8 +29,8 @@ import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 import { UserRequest } from '../../auth/decorators/user-request.decorator';
 
 @ApiBearerAuth()
-@ApiTags('User')
-@Controller('user/categories')
+@ApiTags('User Categories')
+@Controller('api-user/categories')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class UserCategoriesController {
   constructor(private readonly userCategoriesService: UserCategoriesService) {}

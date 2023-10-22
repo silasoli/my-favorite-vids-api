@@ -14,7 +14,6 @@ export class AuthUserJwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-
   async validate(payload: Ivalidate): Promise<IvalidateReturn> {
     return { _id: payload.sub };
   }

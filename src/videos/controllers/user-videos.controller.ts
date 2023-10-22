@@ -28,12 +28,12 @@ import { VideoResponseDto } from '../dto/response-video.dto';
 import { UserRequest } from '../../auth/decorators/user-request.decorator';
 import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 import { UserVideosService } from '../services/user-videos.service';
-import { VideoQueryDto } from '../dto/video-query.dto';
+import { VideoQueryDto } from '../../discover/dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()
-@ApiTags('User')
-@Controller('user/videos')
+@ApiTags('User Videos')
+@Controller('api-user/videos')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class UserVideosController {
   constructor(private readonly userVideosService: UserVideosService) {}
@@ -84,20 +84,6 @@ export class UserVideosController {
     @UserRequest() user: UserRequestDTO,
   ): Promise<string[]> {
     return this.userVideosService.getPlatformsFromUserVideos(user._id);
-  }
-
-  @ApiOperation({ summary: 'Obter listagem de videos de um usuário' })
-  @ApiResponse({
-    status: 200,
-    description: 'Listagem de videos de um usuário retornada com sucesso',
-    type: PaginatedResponseVideosDto,
-  })
-  @Get('discover')
-  @Role([Roles.USER])
-  discoverPublicVideos(
-    @Query() query: VideoQueryDto,
-  ): Promise<PaginatedResponseVideosDto> {
-    return this.userVideosService.discoverPublicVideos(query);
   }
 
   @ApiOperation({ summary: 'Obter um video do usuário' })

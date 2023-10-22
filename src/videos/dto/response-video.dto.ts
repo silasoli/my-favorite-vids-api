@@ -12,7 +12,7 @@ export class VideoResponseDto {
       title,
       description,
       privy,
-      platform
+      platform,
     };
   }
 

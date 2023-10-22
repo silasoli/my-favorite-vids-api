@@ -81,7 +81,7 @@ describe('UsersService', () => {
               return null;
             }),
             findByEmail: jest.fn().mockResolvedValue(null),
-            findByName: jest.fn().mockResolvedValue(null),            
+            findByName: jest.fn().mockResolvedValue(null),
             find: jest.fn().mockImplementation(() => {
               return usersList;
             }),

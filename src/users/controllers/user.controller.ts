@@ -53,8 +53,8 @@ export const storage = diskStorage({
 });
 
 @ApiBearerAuth()
-@ApiTags('User')
-@Controller('user')
+@ApiTags('User Profile')
+@Controller('api-user')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -65,7 +65,7 @@ export class UserController {
     description: 'Perfil do usuário retornado com sucesso',
     type: ProfileUserResponseDto,
   })
-  @Get()
+  @Get('/profile')
   @Role([Roles.USER])
   public async findProfile(
     @UserRequest() user: UserRequestDTO,
@@ -80,7 +80,7 @@ export class UserController {
     type: ProfileUserResponseDto,
   })
   @ApiBody({ type: UpdateProfileUserDto })
-  @Patch()
+  @Patch('/profile')
   @Role([Roles.USER])
   public async updateProfile(
     @UserRequest() user: UserRequestDTO,
@@ -100,7 +100,7 @@ export class UserController {
   })
   @ApiBody({ type: DeleteUserDto })
   @HttpCode(204)
-  @Delete()
+  @Delete('/profile')
   @Role([Roles.USER])
   public async remove(
     @UserRequest() user: UserRequestDTO,
@@ -119,7 +119,7 @@ export class UserController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Patch('/picture')
+  @Patch('/profile/picture')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UploadProfilePictureDto })
   @UseInterceptors(FileInterceptor('file', { storage }))
@@ -140,7 +140,7 @@ export class UserController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Get('/picture')
+  @Get('profile/picture')
   public async getProfilePicture<T>(
     @UserRequest() user: UserRequestDTO,
     @Res() res,
@@ -148,20 +148,5 @@ export class UserController {
     const fileUrl = await this.userService.getProfilePicture(user._id);
 
     return of(res.sendFile(fileUrl));
-  }
-
-
-  @ApiOperation({ summary: 'Obter listagem de usuários' })
-  @ApiResponse({
-    status: 200,
-    description: 'Listagem de usuários retornada com sucesso',
-    type: PaginatedResponseUsersDto,
-  })
-  @Get('users/discover')
-  @Role([Roles.USER])
-  discoverPublicVideos(
-    @Query() query: UsersQueryDto,
-  ): Promise<PaginatedResponseUsersDto> {
-    return this.userService.discoverPublicUsers(query);
   }
 }
