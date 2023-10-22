@@ -7,11 +7,13 @@ import { AppController } from './app.controller';
 import { RolesModule } from './roles/roles.module';
 import { CategoriesModule } from './categories/categories.module';
 import { VideosModule } from './videos/videos.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URI),
+    CommonModule,
     UsersModule,
     AuthModule,
     RolesModule,
