@@ -22,5 +22,3 @@ export class CreateCategoryDto {
 export class CreateCategoryToUserDto extends OmitType(CreateCategoryDto, [
   'user_id',
 ] as const) {}
-
-

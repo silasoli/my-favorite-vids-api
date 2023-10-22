@@ -29,7 +29,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       `Http Status: ${status} Error Message: ${JSON.stringify(errorObj)}`,
     );
 
-    if (typeof errorObj.message === 'string'){
+    if (typeof errorObj.message === 'string') {
       const messageValue = errorObj.message;
       errorObj.message = [messageValue];
     }

@@ -90,29 +90,4 @@ export class UserService {
 
     return join(process.cwd(), 'uploads/profile-picture/' + profilePicture);
   }
-
-  public async discoverPublicUsers(
-    query: UsersQueryDto,
-  ): Promise<PaginatedResponseUsersDto> {
-    const filters: any = { privy: false };
-
-    if (query.username) {
-      filters.username = {
-        $regex: `.*${query.username.toLowerCase()}.*`,
-        $options: 'i',
-      };
-    }
-
-    const paginatedData = await this.paginationService.pagination(
-      this.userModel,
-      query.page,
-      filters,
-    );
-
-    const data = paginatedData.data.map(
-      (user) => new ProfileUserResponseDto(user),
-    );
-
-    return new PaginatedResponseUsersDto(data, paginatedData.meta);
-  }
 }

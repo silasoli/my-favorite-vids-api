@@ -26,7 +26,6 @@ import Roles from '../../roles/enums/role.enum';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { CategoryResponseDto } from '../dto/category-response.dto';
 
-
 @ApiBearerAuth()
 @ApiTags('Admin Categories')
 @Controller('api-admin/categories')

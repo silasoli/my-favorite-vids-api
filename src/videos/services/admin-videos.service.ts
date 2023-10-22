@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
 import { EngineValidationVideosService } from './engine-validation-videos.service';
 import { PaginationService } from '../../common/services/pagination.service';
-import { VideoQueryDto } from '../dto/video-query.dto';
+import { VideoQueryDto } from '../../discover/dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @Injectable()
@@ -59,7 +59,7 @@ export class AdminVideosService {
     const paginatedData = await this.paginationService.pagination(
       this.videoModel,
       query.page,
-      filters
+      filters,
     );
 
     const data = paginatedData.data.map((video) => new VideoResponseDto(video));

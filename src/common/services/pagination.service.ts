@@ -4,7 +4,6 @@ import { PaginateDto } from '../dtos/paginate.dto';
 
 @Injectable()
 export class PaginationService {
-
   public async pagination(
     model: Model<any>,
     page = null,
@@ -23,9 +22,9 @@ export class PaginationService {
     const data = await model
       .find(query)
       .skip(10 * page - 10)
-      .limit(pageSize)
+      .limit(pageSize);
 
-    const meta = { page, take: pageSize, total, pages }
+    const meta = { page, take: pageSize, total, pages };
 
     return new PaginateDto(data, meta);
   }

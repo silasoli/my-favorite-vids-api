@@ -26,7 +26,7 @@ import Roles from '../../roles/enums/role.enum';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { AdminVideosService } from '../services/admin-videos.service';
 import { VideoResponseDto } from '../dto/response-video.dto';
-import { VideoQueryDto } from '../dto/video-query.dto';
+import { VideoQueryDto } from '../../discover/dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()

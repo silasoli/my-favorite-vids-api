@@ -38,7 +38,7 @@ export class AuthService {
       email,
       username,
       access_token: this.jwtService.sign(payload),
-    })
+    });
   }
 
   async decodeAccessToken<T extends object>(accessToken: string): Promise<T> {

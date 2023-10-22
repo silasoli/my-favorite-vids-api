@@ -17,7 +17,6 @@ async function bootstrap() {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
 
-
   app.enableCors({
     origin: '*',
   });
@@ -34,7 +33,7 @@ async function bootstrap() {
     swaggerOptions: {
       persistAuthorization: true,
       tagsSorter: 'alpha',
-      operationsSorter:'',
+      operationsSorter: '',
     },
     customCssUrl:
       'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',

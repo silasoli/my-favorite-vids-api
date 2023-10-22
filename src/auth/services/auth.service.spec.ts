@@ -40,7 +40,9 @@ describe('AuthService', () => {
 
   jwtServiceMock = {
     sign: jest.fn().mockReturnValue('mocked_token'),
-    verifyAsync: jest.fn().mockResolvedValue({ sub: userId, username: userName }),
+    verifyAsync: jest
+      .fn()
+      .mockResolvedValue({ sub: userId, username: userName }),
   };
 
   beforeEach(async () => {
@@ -69,17 +71,28 @@ describe('AuthService', () => {
     it('should validate a user based on email and password', async () => {
       const user = await authService.validateUser(userLoginDto);
       expect(user.email).toBe(mockUser.email);
-      expect(usersServiceMock.findByEmail).toHaveBeenCalledWith(userLoginDto.email);
-      expect(usersServiceMock.comparePass).toHaveBeenCalledWith(userLoginDto.password, mockUser.password);
+      expect(usersServiceMock.findByEmail).toHaveBeenCalledWith(
+        userLoginDto.email,
+      );
+      expect(usersServiceMock.comparePass).toHaveBeenCalledWith(
+        userLoginDto.password,
+        mockUser.password,
+      );
     });
 
     it('should return null if email is not found', async () => {
-      const result = await authService.validateUser({ ...userLoginDto, email: 'invalid@example.com' });
+      const result = await authService.validateUser({
+        ...userLoginDto,
+        email: 'invalid@example.com',
+      });
       expect(result).toBeNull();
     });
 
     it('should return null if password is incorrect', async () => {
-      const result = await authService.validateUser({ ...userLoginDto, password: 'incorrectPassword' });
+      const result = await authService.validateUser({
+        ...userLoginDto,
+        password: 'incorrectPassword',
+      });
       expect(result).toBeNull();
     });
   });
@@ -94,13 +107,11 @@ describe('AuthService', () => {
 
   describe('decodeAccessToken', () => {
     it('should decode an access token', async () => {
-      const payload = await authService.decodeAccessToken('mocked_token') as { sub: string };
-expect(payload.sub).toBe(userId);
+      const payload = (await authService.decodeAccessToken('mocked_token')) as {
+        sub: string;
+      };
+      expect(payload.sub).toBe(userId);
       expect(jwtServiceMock.verifyAsync).toHaveBeenCalledWith('mocked_token');
     });
   });
-
-
 });
-
-

@@ -10,7 +10,6 @@ export interface Ipayload {
   access_token: string;
 }
 
-
 export interface IloginPayload {
   id?: mongoose.ObjectId | string;
 

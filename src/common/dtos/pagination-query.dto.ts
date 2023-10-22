@@ -6,29 +6,29 @@ export class PaginationQueryDto {
   @IsOptional()
   page?: number;
 
-//   @ApiProperty({
-//     required: false,
-//     description: 'Field to search',
-//   })
-//   @IsOptional()
-//   fieldSearch?: string;
+  //   @ApiProperty({
+  //     required: false,
+  //     description: 'Field to search',
+  //   })
+  //   @IsOptional()
+  //   fieldSearch?: string;
 
-//   @ApiProperty({ required: false, description: 'String field to search' })
-//   @IsOptional()
-//   search?: string;
+  //   @ApiProperty({ required: false, description: 'String field to search' })
+  //   @IsOptional()
+  //   search?: string;
 
-//   @ApiProperty({
-//     required: false,
-//     description: 'Field by which the records will be sorted',
-//   })
-//   @IsOptional()
-//   fieldSort?: string;
+  //   @ApiProperty({
+  //     required: false,
+  //     description: 'Field by which the records will be sorted',
+  //   })
+  //   @IsOptional()
+  //   fieldSort?: string;
 
-//   @ApiProperty({
-//     required: false,
-//     description: 'Field that indicates the ordering',
-//     enum: ['ASC', 'DESC'],
-//   })
-//   @IsOptional()
-//   sort?: string;
+  //   @ApiProperty({
+  //     required: false,
+  //     description: 'Field that indicates the ordering',
+  //     enum: ['ASC', 'DESC'],
+  //   })
+  //   @IsOptional()
+  //   sort?: string;
 }
