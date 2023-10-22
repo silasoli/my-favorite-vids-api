@@ -63,6 +63,23 @@ export class UserVideosController {
     return this.userVideosService.findAllVideosOfUser(user._id);
   }
 
+  @ApiOperation({
+    summary: 'Obter listagem de plataformas videos de um usuário',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Listagem de plataformas videos de um usuário retornada com sucesso',
+    type: [String],
+  })
+  @Get('platforms')
+  @Role([Roles.USER])
+  getPlatformsFromUserVideos(
+    @UserRequest() user: UserRequestDTO,
+  ): Promise<string[]> {
+    return this.userVideosService.getPlatformsFromUserVideos(user._id);
+  }
+
   @ApiOperation({ summary: 'Obter um video do usuário' })
   @ApiResponse({
     status: 200,
