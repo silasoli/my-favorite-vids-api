@@ -98,6 +98,32 @@ export class UserVideosService {
     return new PaginatedResponseVideosDto(data, paginatedData.meta);
   }
 
+  public async discoverPublicVideos(
+    query: VideoQueryDto,
+  ): Promise<PaginatedResponseVideosDto> {
+    const filters: any = { privy: false };
+
+    if (query.platform) filters.platform = query.platform;
+
+    if (query.title) {
+      filters.title = {
+        $regex: `.*${query.title.toLowerCase()}.*`,
+        $options: 'i',
+      };
+    }
+
+    const paginatedData = await this.paginationService.pagination(
+      this.videoModel,
+      query.page,
+      filters,
+    );
+
+    const data = paginatedData.data.map((video) => new VideoResponseDto(video));
+
+    return new PaginatedResponseVideosDto(data, paginatedData.meta);
+  }
+
+
   private async findVideoByIDOfUser(
     _id: string,
     user_id: string,

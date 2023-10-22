@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Res,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -33,6 +34,8 @@ import path = require('path');
 import { diskStorage } from 'multer';
 import { Observable, of } from 'rxjs';
 import { UserService } from '../services/user.service';
+import { PaginatedResponseUsersDto } from '../dto/paginated-response-users.dto';
+import { UsersQueryDto } from '../dto/users-query.dto';
 
 export const storage = diskStorage({
   destination: './uploads/profile-picture/',
@@ -145,5 +148,20 @@ export class UserController {
     const fileUrl = await this.userService.getProfilePicture(user._id);
 
     return of(res.sendFile(fileUrl));
+  }
+
+
+  @ApiOperation({ summary: 'Obter listagem de usuários' })
+  @ApiResponse({
+    status: 200,
+    description: 'Listagem de usuários retornada com sucesso',
+    type: PaginatedResponseUsersDto,
+  })
+  @Get('users/discover')
+  @Role([Roles.USER])
+  discoverPublicVideos(
+    @Query() query: UsersQueryDto,
+  ): Promise<PaginatedResponseUsersDto> {
+    return this.userService.discoverPublicUsers(query);
   }
 }

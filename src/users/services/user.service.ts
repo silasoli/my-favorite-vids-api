@@ -9,6 +9,9 @@ import { UsersService } from './users.service';
 import { UploadProfilePictureDto } from '../dto/upload-profile-picture.dto';
 import { join } from 'path';
 import * as fs from 'fs';
+import { UsersQueryDto } from '../dto/users-query.dto';
+import { PaginatedResponseUsersDto } from '../dto/paginated-response-users.dto';
+import { PaginationService } from '../../common/services/pagination.service';
 
 @Injectable()
 export class UserService {
@@ -16,6 +19,7 @@ export class UserService {
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
     private usersService: UsersService,
+    private readonly paginationService: PaginationService,
   ) {}
 
   public async findProfile(_id: string): Promise<ProfileUserResponseDto> {
@@ -85,5 +89,30 @@ export class UserService {
       : 'default-image.png';
 
     return join(process.cwd(), 'uploads/profile-picture/' + profilePicture);
+  }
+
+  public async discoverPublicUsers(
+    query: UsersQueryDto,
+  ): Promise<PaginatedResponseUsersDto> {
+    const filters: any = { privy: false };
+
+    if (query.username) {
+      filters.username = {
+        $regex: `.*${query.username.toLowerCase()}.*`,
+        $options: 'i',
+      };
+    }
+
+    const paginatedData = await this.paginationService.pagination(
+      this.userModel,
+      query.page,
+      filters,
+    );
+
+    const data = paginatedData.data.map(
+      (user) => new ProfileUserResponseDto(user),
+    );
+
+    return new PaginatedResponseUsersDto(data, paginatedData.meta);
   }
 }
