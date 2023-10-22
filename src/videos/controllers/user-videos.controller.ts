@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { UserCreateVideoDto } from '../dto/create-video.dto';
 import { UserUpdateVideoDto } from '../dto/update-video.dto';
@@ -27,6 +28,8 @@ import { VideoResponseDto } from '../dto/response-video.dto';
 import { UserRequest } from '../../auth/decorators/user-request.decorator';
 import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 import { UserVideosService } from '../services/user-videos.service';
+import { VideoQueryDto } from '../dto/video-query.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -55,12 +58,15 @@ export class UserVideosController {
   @ApiResponse({
     status: 200,
     description: 'Listagem de videos de um usuário retornada com sucesso',
-    type: [VideoResponseDto],
+    type: PaginatedResponseVideosDto,
   })
   @Get()
   @Role([Roles.USER])
-  findAll(@UserRequest() user: UserRequestDTO): Promise<VideoResponseDto[]> {
-    return this.userVideosService.findAllVideosOfUser(user._id);
+  findAll(
+    @UserRequest() user: UserRequestDTO,
+    @Query() query: VideoQueryDto
+  ): Promise<PaginatedResponseVideosDto> {
+    return this.userVideosService.findAllVideosOfUser(user._id, query);
   }
 
   @ApiOperation({

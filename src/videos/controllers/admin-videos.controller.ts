@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { CreateVideoDto } from '../dto/create-video.dto';
 import { UpdateVideoDto } from '../dto/update-video.dto';
@@ -25,6 +26,8 @@ import Roles from '../../roles/enums/role.enum';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { AdminVideosService } from '../services/admin-videos.service';
 import { VideoResponseDto } from '../dto/response-video.dto';
+import { VideoQueryDto } from '../dto/video-query.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()
 @ApiTags('Videos')
@@ -50,12 +53,12 @@ export class AdminVideosController {
   @ApiResponse({
     status: 200,
     description: 'Listagem de videos dos usuários retornada com sucesso',
-    type: [VideoResponseDto],
+    type: PaginatedResponseVideosDto,
   })
   @Get()
   @Role([Roles.ADMIN])
-  findAll(): Promise<VideoResponseDto[]> {
-    return this.adminVideosService.findAll();
+  findAll(@Query() query: VideoQueryDto): Promise<PaginatedResponseVideosDto> {
+    return this.adminVideosService.findAll(query);
   }
 
   @ApiOperation({ summary: 'Obter video de um usuário' })

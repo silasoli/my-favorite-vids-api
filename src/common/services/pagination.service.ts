@@ -1,30 +1,32 @@
 import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { PaginateDto } from '../dtos/paginate.dto';
 
 @Injectable()
 export class PaginationService {
-//   public async findAllPagination(
-//     model: Repository<any>,
-//     page = 0,
-//     query: object = {},
-//   ): Promise<any[] | IPaginate> {
-//     const pageSize = 10;
 
-//     const qtyRecords = await model.count(query);
+  public async pagination(
+    model: Model<any>,
+    page = null,
+    query: object = {},
+  ): Promise<PaginateDto<any>> {
+    page = Number(page);
 
-//     const qtyPages = Math.ceil(qtyRecords / pageSize);
+    const pageSize = 10;
 
-//     if (!page) {
-//       return model.find(query);
-//     }
+    const total = await model.count(query);
 
-//     return {
-//       qtyRecords,
-//       qtyPages,
-//       records: await repository.find({
-//         ...query,
-//         take: pageSize,
-//         skip: 10 * page - 10,
-//       }),
-//     };
-//   }
+    const pages = Math.ceil(total / pageSize);
+
+    if (!page || page === 0) return { data: await model.find(query) };
+
+    const data = await model
+      .find(query)
+      .skip(10 * page - 10)
+      .limit(pageSize)
+
+    const meta = { page, take: pageSize, total, pages }
+
+    return new PaginateDto(data, meta);
+  }
 }

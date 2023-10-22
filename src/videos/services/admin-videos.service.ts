@@ -10,6 +10,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
 import { EngineValidationVideosService } from './engine-validation-videos.service';
+import { PaginationService } from '../../common/services/pagination.service';
+import { VideoQueryDto } from '../dto/video-query.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @Injectable()
 export class AdminVideosService {
@@ -17,6 +20,7 @@ export class AdminVideosService {
     @InjectModel(Video.name)
     private videoModel: Model<VideoDocument>,
     private readonly engineValidationVideosService: EngineValidationVideosService,
+    private readonly paginationService: PaginationService,
   ) {}
 
   async validateCreate(user_id: string, title: string): Promise<void> {
@@ -38,9 +42,18 @@ export class AdminVideosService {
     return new VideoResponseDto(created);
   }
 
-  public async findAll(): Promise<VideoResponseDto[]> {
-    const videos = await this.videoModel.find();
-    return videos.map((video) => new VideoResponseDto(video));
+  public async findAll(
+    dto: VideoQueryDto,
+  ): Promise<PaginatedResponseVideosDto> {
+    const paginatedData = await this.paginationService.pagination(
+      this.videoModel,
+      dto.page,
+      {},
+    );
+
+    const data = paginatedData.data.map((video) => new VideoResponseDto(video));
+
+    return new PaginatedResponseVideosDto(data, paginatedData.meta);
   }
 
   private async findVideoByID(_id: string): Promise<Video> {
