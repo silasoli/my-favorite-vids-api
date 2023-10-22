@@ -64,7 +64,7 @@ export class UserVideosController {
   @Role([Roles.USER])
   findAll(
     @UserRequest() user: UserRequestDTO,
-    @Query() query: VideoQueryDto
+    @Query() query: VideoQueryDto,
   ): Promise<PaginatedResponseVideosDto> {
     return this.userVideosService.findAllVideosOfUser(user._id, query);
   }
@@ -84,6 +84,20 @@ export class UserVideosController {
     @UserRequest() user: UserRequestDTO,
   ): Promise<string[]> {
     return this.userVideosService.getPlatformsFromUserVideos(user._id);
+  }
+
+  @ApiOperation({ summary: 'Obter listagem de videos de um usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Listagem de videos de um usuário retornada com sucesso',
+    type: PaginatedResponseVideosDto,
+  })
+  @Get('discover')
+  @Role([Roles.USER])
+  discoverPublicVideos(
+    @Query() query: VideoQueryDto,
+  ): Promise<PaginatedResponseVideosDto> {
+    return this.userVideosService.discoverPublicVideos(query);
   }
 
   @ApiOperation({ summary: 'Obter um video do usuário' })
