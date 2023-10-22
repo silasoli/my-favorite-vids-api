@@ -12,7 +12,7 @@ import { VideoResponseDto } from '../dto/response-video.dto';
 import { EngineValidationVideosService } from './engine-validation-videos.service';
 import { PaginationService } from '../../common/services/pagination.service';
 import { VideoQueryDto } from '../dto/video-query.dto';
-import { PageDto } from '../../common/dtos/page.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @Injectable()
 export class AdminVideosService {
@@ -42,7 +42,9 @@ export class AdminVideosService {
     return new VideoResponseDto(created);
   }
 
-  public async findAll(dto: VideoQueryDto): Promise<PageDto<VideoResponseDto>> {
+  public async findAll(
+    dto: VideoQueryDto,
+  ): Promise<PaginatedResponseVideosDto> {
     const paginatedData = await this.paginationService.pagination(
       this.videoModel,
       dto.page,
@@ -51,7 +53,7 @@ export class AdminVideosService {
 
     const data = paginatedData.data.map((video) => new VideoResponseDto(video));
 
-    return new PageDto(data, paginatedData.meta);
+    return new PaginatedResponseVideosDto(data, paginatedData.meta);
   }
 
   private async findVideoByID(_id: string): Promise<Video> {

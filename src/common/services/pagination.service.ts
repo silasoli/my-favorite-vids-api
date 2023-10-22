@@ -18,8 +18,6 @@ export class PaginationService {
 
     const pages = Math.ceil(total / pageSize);
 
-    console.log(query)
-
     if (!page || page === 0) return { data: await model.find(query) };
 
     const data = await model

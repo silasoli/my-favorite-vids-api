@@ -27,7 +27,7 @@ import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { AdminVideosService } from '../services/admin-videos.service';
 import { VideoResponseDto } from '../dto/response-video.dto';
 import { VideoQueryDto } from '../dto/video-query.dto';
-import { PageDto } from '../../common/dtos/page.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()
 @ApiTags('Videos')
@@ -53,11 +53,11 @@ export class AdminVideosController {
   @ApiResponse({
     status: 200,
     description: 'Listagem de videos dos usuários retornada com sucesso',
-    type: () => PageDto<{ string: 'oi'}>,
+    type: PaginatedResponseVideosDto,
   })
   @Get()
   @Role([Roles.ADMIN])
-  findAll(@Query() query: VideoQueryDto): Promise<PageDto<VideoResponseDto>> {
+  findAll(@Query() query: VideoQueryDto): Promise<PaginatedResponseVideosDto> {
     return this.adminVideosService.findAll(query);
   }
 

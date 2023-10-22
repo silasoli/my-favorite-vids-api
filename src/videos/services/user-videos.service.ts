@@ -11,9 +11,9 @@ import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
 import mongoose from 'mongoose';
 import { EngineValidationVideosService } from './engine-validation-videos.service';
-import { PageDto } from '../../common/dtos/page.dto';
 import { PaginationService } from '../../common/services/pagination.service';
 import { VideoQueryDto } from '../dto/video-query.dto';
+import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @Injectable()
 export class UserVideosService {
@@ -75,7 +75,7 @@ export class UserVideosService {
   public async findAllVideosOfUser(
     user_id: string,
     dto: VideoQueryDto,
-  ): Promise<PageDto<VideoResponseDto>> {
+  ): Promise<PaginatedResponseVideosDto> {
     const filters = { user_id };
 
     const paginatedData = await this.paginationService.pagination(
@@ -86,7 +86,7 @@ export class UserVideosService {
 
     const data = paginatedData.data.map((video) => new VideoResponseDto(video));
 
-    return new PageDto(data, paginatedData.meta);
+    return new PaginatedResponseVideosDto(data, paginatedData.meta);
   }
 
   private async findVideoByIDOfUser(
