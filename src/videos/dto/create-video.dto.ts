@@ -31,8 +31,8 @@ export class CreateVideoDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @ValidateIf((value) => value != undefined)
-  @IsString({ message: 'O Título do video deve ser uma string.' })
-  @IsNotEmpty({ message: 'É necessário informar o título do video.' })
+  @IsString({ message: 'A descrição do video deve ser uma string.' })
+  @IsNotEmpty({ message: 'É necessário informar a descrição do video.' })
   description: string;
 
   @ApiProperty({ required: true })
