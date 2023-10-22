@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { UserCreateVideoDto } from '../dto/create-video.dto';
 import { UserUpdateVideoDto } from '../dto/update-video.dto';
@@ -27,6 +28,8 @@ import { VideoResponseDto } from '../dto/response-video.dto';
 import { UserRequest } from '../../auth/decorators/user-request.decorator';
 import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 import { UserVideosService } from '../services/user-videos.service';
+import { PageDto } from '../../common/dtos/page.dto';
+import { VideoQueryDto } from '../dto/video-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -59,8 +62,11 @@ export class UserVideosController {
   })
   @Get()
   @Role([Roles.USER])
-  findAll(@UserRequest() user: UserRequestDTO): Promise<VideoResponseDto[]> {
-    return this.userVideosService.findAllVideosOfUser(user._id);
+  findAll(
+    @UserRequest() user: UserRequestDTO,
+    @Query() query: VideoQueryDto
+  ): Promise<PageDto<VideoResponseDto>> {
+    return this.userVideosService.findAllVideosOfUser(user._id, query);
   }
 
   @ApiOperation({

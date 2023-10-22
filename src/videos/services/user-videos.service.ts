@@ -11,6 +11,9 @@ import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
 import mongoose from 'mongoose';
 import { EngineValidationVideosService } from './engine-validation-videos.service';
+import { PageDto } from '../../common/dtos/page.dto';
+import { PaginationService } from '../../common/services/pagination.service';
+import { VideoQueryDto } from '../dto/video-query.dto';
 
 @Injectable()
 export class UserVideosService {
@@ -18,6 +21,7 @@ export class UserVideosService {
     @InjectModel(Video.name)
     private videoModel: Model<VideoDocument>,
     private readonly engineValidationVideosService: EngineValidationVideosService,
+    private readonly paginationService: PaginationService,
   ) {}
 
   public async getPlatformsFromUserVideos(user_id: string): Promise<string[]> {
@@ -50,7 +54,9 @@ export class UserVideosService {
     const existingVideo = await this.videoModel.findOne({ user_id, title });
 
     if (existingVideo)
-      throw new ConflictException('Você já cadastrou um vídeo com esse titulo.');
+      throw new ConflictException(
+        'Você já cadastrou um vídeo com esse titulo.',
+      );
   }
 
   public async createToUser(
@@ -68,10 +74,19 @@ export class UserVideosService {
 
   public async findAllVideosOfUser(
     user_id: string,
-  ): Promise<VideoResponseDto[]> {
-    const videos = await this.videoModel.find({ user_id });
+    dto: VideoQueryDto,
+  ): Promise<PageDto<VideoResponseDto>> {
+    const filters = { user_id };
 
-    return videos.map((video) => new VideoResponseDto(video));
+    const paginatedData = await this.paginationService.pagination(
+      this.videoModel,
+      dto.page,
+      filters,
+    );
+
+    const data = paginatedData.data.map((video) => new VideoResponseDto(video));
+
+    return new PageDto(data, paginatedData.meta);
   }
 
   private async findVideoByIDOfUser(
@@ -106,7 +121,9 @@ export class UserVideosService {
     });
 
     if (existingVideo) {
-      throw new ConflictException('Você já cadastrou um vídeo com esse titulo.');
+      throw new ConflictException(
+        'Você já cadastrou um vídeo com esse titulo.',
+      );
     }
   }
 
