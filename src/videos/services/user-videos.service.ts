@@ -9,13 +9,42 @@ import { Video, VideoDocument } from '../entities/video.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { VideoResponseDto } from '../dto/response-video.dto';
+import mongoose from 'mongoose';
+import { EngineValidationVideosService } from './engine-validation-videos.service';
 
 @Injectable()
 export class UserVideosService {
   constructor(
     @InjectModel(Video.name)
     private videoModel: Model<VideoDocument>,
+    private readonly engineValidationVideosService: EngineValidationVideosService,
   ) {}
+
+  public async getPlatformsFromUserVideos(user_id: string): Promise<string[]> {
+    const aggregationPipeline = [
+      {
+        $match: {
+          user_id: new mongoose.Types.ObjectId(user_id),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          platforms: { $addToSet: '$platform' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          platforms: 1,
+        },
+      },
+    ];
+
+    const result = await this.videoModel.aggregate(aggregationPipeline);
+
+    return result.length > 0 ? result[0].platforms : [];
+  }
 
   async validateCreate(user_id: string, title: string): Promise<void> {
     const existingVideo = await this.videoModel.findOne({ user_id, title });
@@ -28,9 +57,11 @@ export class UserVideosService {
     user_id: string,
     dto: UserCreateVideoDto,
   ): Promise<VideoResponseDto> {
+    const url = this.engineValidationVideosService.validateURL(dto);
+
     await this.validateCreate(user_id, dto.title);
 
-    const created = await this.videoModel.create({ ...dto, user_id });
+    const created = await this.videoModel.create({ ...dto, url, user_id });
 
     return new VideoResponseDto(created);
   }

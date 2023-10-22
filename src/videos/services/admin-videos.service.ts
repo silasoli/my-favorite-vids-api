@@ -33,7 +33,7 @@ export class AdminVideosService {
 
     await this.validateCreate(dto.user_id, dto.title);
 
-    const created = await this.videoModel.create({ url, ...dto });
+    const created = await this.videoModel.create({ ...dto, url });
 
     return new VideoResponseDto(created);
   }
