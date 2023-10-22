@@ -47,7 +47,7 @@ export class UserVideosService {
 
     const result = await this.videoModel.aggregate(aggregationPipeline);
 
-    return result.length > 0 ? result[0].platforms : [];
+    return result.length > 0 ? result[0].platforms.sort() : [];
   }
 
   async validateCreate(user_id: string, title: string): Promise<void> {
@@ -74,13 +74,22 @@ export class UserVideosService {
 
   public async findAllVideosOfUser(
     user_id: string,
-    dto: VideoQueryDto,
+    query: VideoQueryDto,
   ): Promise<PaginatedResponseVideosDto> {
-    const filters = { user_id };
+    const filters: any = { user_id };
+
+    if (query.platform) filters.platform = query.platform;
+
+    if (query.title) {
+      filters.title = {
+        $regex: `.*${query.title.toLowerCase()}.*`,
+        $options: 'i',
+      };
+    }
 
     const paginatedData = await this.paginationService.pagination(
       this.videoModel,
-      dto.page,
+      query.page,
       filters,
     );
 

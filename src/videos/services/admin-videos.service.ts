@@ -43,12 +43,23 @@ export class AdminVideosService {
   }
 
   public async findAll(
-    dto: VideoQueryDto,
+    query: VideoQueryDto,
   ): Promise<PaginatedResponseVideosDto> {
+    const filters: any = {};
+
+    if (query.platform) filters.platform = query.platform;
+
+    if (query.title) {
+      filters.title = {
+        $regex: `.*${query.title.toLowerCase()}.*`,
+        $options: 'i',
+      };
+    }
+
     const paginatedData = await this.paginationService.pagination(
       this.videoModel,
-      dto.page,
-      {},
+      query.page,
+      filters
     );
 
     const data = paginatedData.data.map((video) => new VideoResponseDto(video));
