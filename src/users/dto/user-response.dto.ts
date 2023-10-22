@@ -5,9 +5,9 @@ import Roles from '../../roles/enums/role.enum';
 
 export class UserResponseDto {
   constructor(user: User) {
-    const { _id, username, email, privy, roles } = user;
+    const { _id, username, email, privy, roles, bio } = user;
 
-    return { _id: String(_id), username, email, privy, roles };
+    return { _id: String(_id), username, email, privy, roles, bio };
   }
 
   @ApiProperty({ required: true })
@@ -22,6 +22,9 @@ export class UserResponseDto {
   @IsNotEmpty({ message: 'É necessário informar o email do usuário.' })
   @IsEmail({}, { message: 'O email informado deve ser válido' })
   email: string;
+
+  @ApiProperty({ required: false })
+  bio: string;
 
   @ApiProperty({ required: true })
   roles: Roles[];
