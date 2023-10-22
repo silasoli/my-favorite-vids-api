@@ -63,7 +63,11 @@ export class EngineValidationVideosService {
       },
       [VideoPlatform.TIKTOK]: (url: string) => {
         const startIndex = url.indexOf('video/') + 6;
-        const videoIdentifier = url.substring(startIndex);
+        const endIndex = url.indexOf('?', startIndex);
+        const videoIdentifier = url.substring(
+          startIndex,
+          endIndex !== -1 ? endIndex : undefined,
+        );
 
         return `${this.tiktokURL}${videoIdentifier}`;
       },
