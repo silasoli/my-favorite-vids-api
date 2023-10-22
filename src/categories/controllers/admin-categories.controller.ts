@@ -28,10 +28,10 @@ import { CategoryResponseDto } from '../dto/category-response.dto';
 
 
 @ApiBearerAuth()
-@ApiTags('Categories')
-@Controller('categories')
+@ApiTags('Admin Categories')
+@Controller('api-admin/categories')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
-export class CategoriesController {
+export class AdminCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @ApiOperation({ summary: 'Criar categoria.' })

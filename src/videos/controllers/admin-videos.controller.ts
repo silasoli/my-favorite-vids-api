@@ -30,8 +30,8 @@ import { VideoQueryDto } from '../dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
 
 @ApiBearerAuth()
-@ApiTags('Videos')
-@Controller('videos')
+@ApiTags('Admin Videos')
+@Controller('api-admin/videos')
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class AdminVideosController {
   constructor(private readonly adminVideosService: AdminVideosService) {}
