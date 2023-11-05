@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { VideoQueryDto } from '../dto/video-query.dto';
+import { TitleVideoQueryDto, VideoQueryDto } from '../dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../../videos/dto/paginated-response-video.dto';
 import { VideoResponseDto } from '../../videos/dto/response-video.dto';
 import { PaginationService } from '../../common/services/pagination.service';
@@ -22,6 +22,41 @@ export class UserDiscoverService {
 
     private readonly paginationService: PaginationService,
   ) {}
+
+  public async getPlatformsDiscoverPublicVideos(
+    query: TitleVideoQueryDto,
+  ): Promise<string[]> {
+    const filters: any = { privy: false };
+
+    if (query.title) {
+      filters.title = {
+        $regex: `.*${query.title.toLowerCase()}.*`,
+        $options: 'i',
+      };
+    }
+
+    const aggregationPipeline = [
+      {
+        $match: filters,
+      },
+      {
+        $group: {
+          _id: null,
+          platforms: { $addToSet: '$platform' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          platforms: 1,
+        },
+      },
+    ];
+
+    const result = await this.videoModel.aggregate(aggregationPipeline);
+
+    return result.length > 0 ? result[0].platforms.sort() : [];
+  }
 
   public async discoverPublicVideos(
     query: VideoQueryDto,
