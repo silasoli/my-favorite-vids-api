@@ -13,3 +13,9 @@ export class VideoQueryDto extends PaginationQueryDto {
   @IsOptional()
   title?: string;
 }
+
+export class TitleVideoQueryDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  title?: string;
+}

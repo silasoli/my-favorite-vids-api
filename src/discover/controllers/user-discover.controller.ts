@@ -11,7 +11,7 @@ import { RoleGuard } from '../../roles/guards/role.guard';
 import { PaginatedResponseVideosDto } from '../../videos/dto/paginated-response-video.dto';
 import Roles from '../../roles/enums/role.enum';
 import { Role } from '../../roles/decorators/roles.decorator';
-import { VideoQueryDto } from '../dto/video-query.dto';
+import { TitleVideoQueryDto, VideoQueryDto } from '../dto/video-query.dto';
 import { PaginatedResponseUsersDto } from '../../users/dto/paginated-response-users.dto';
 import { UsersQueryDto } from '../../users/dto/users-query.dto';
 
@@ -21,6 +21,22 @@ import { UsersQueryDto } from '../../users/dto/users-query.dto';
 @UseGuards(AuthUserJwtGuard, RoleGuard)
 export class UserDiscoverController {
   constructor(private readonly userDiscoverService: UserDiscoverService) {}
+
+  @ApiOperation({
+    summary: 'Obter listagem de plataformas videos de um usuário',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Listagem de plataformas videos retornada com sucesso',
+    type: [String],
+  })
+  @Get('videos/platforms')
+  @Role([Roles.USER])
+  getPlatformsDiscoverPublicVideos(
+    @Query() query: TitleVideoQueryDto,
+  ): Promise<string[]> {
+    return this.userDiscoverService.getPlatformsDiscoverPublicVideos(query);
+  }
 
   @ApiOperation({ summary: 'Descobrir videos na plataforma.' })
   @ApiResponse({
