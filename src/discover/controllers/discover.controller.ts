@@ -1,10 +1,5 @@
 import { Controller, Get, Query, Param } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { VideoResponseDto } from '../../videos/dto/response-video.dto';
 import { DiscoverService } from '../services/discover.service';
@@ -14,7 +9,6 @@ import { PaginatedResponseVideosDto } from '../../videos/dto/paginated-response-
 import { VideoQueryDto } from '../dto/video-query.dto';
 import { UserIDQueryDTO } from '../../common/dtos/userid-query.dto';
 
-@ApiBearerAuth()
 @ApiTags('Discover')
 @Controller('/discover')
 export class DiscoverController {
