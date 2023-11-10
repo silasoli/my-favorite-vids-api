@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../../users/schemas/user.entity';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
+import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 
 @Injectable()
 export class DiscoverService {
@@ -22,16 +23,18 @@ export class DiscoverService {
   ) {}
 
   private async findVideoByID(_id: string): Promise<Video> {
-    const video = await this.videoModel.findOne({ privy: false, _id });
+    const video = await this.videoModel
+      .findOne({ privy: false, _id })
+      .populate({ path: 'user_id' });
 
     if (!video) throw new NotFoundException('Vídeo não encontrado.');
 
     return video;
   }
 
-  public async findOne(_id: string): Promise<VideoResponseDto> {
+  public async findOne(_id: string): Promise<VideoUserResponseDto> {
     const video = await this.findVideoByID(_id);
-    return new VideoResponseDto(video);
+    return new VideoUserResponseDto(video);
   }
 
   private async findUserByUsername(username: string): Promise<User> {
