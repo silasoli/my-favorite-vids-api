@@ -8,6 +8,7 @@ import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { PaginatedResponseVideosDto } from '../../videos/dto/paginated-response-video.dto';
 import { VideoQueryDto } from '../dto/video-query.dto';
 import { UserIDQueryDTO } from '../../common/dtos/userid-query.dto';
+import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 
 @ApiTags('Discover')
 @Controller('/discover')
@@ -18,12 +19,12 @@ export class DiscoverController {
   @ApiResponse({
     status: 200,
     description: 'Video do usuário retornado com sucesso',
-    type: VideoResponseDto,
+    type: VideoUserResponseDto,
   })
   @Get('videos/:id')
   discoverPublicVideosByID(
     @Param() params: IDQueryDTO,
-  ): Promise<VideoResponseDto> {
+  ): Promise<VideoUserResponseDto> {
     return this.discoverService.findOne(params.id);
   }
 
