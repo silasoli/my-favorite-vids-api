@@ -8,11 +8,25 @@ import { PaginatedResponseVideosDto } from '../../videos/dto/paginated-response-
 import { VideoQueryDto } from '../dto/video-query.dto';
 import { UserIDQueryDTO } from '../../common/dtos/userid-query.dto';
 import { VideoUserResponseDto } from '../dto/response-video-user.dto';
+import { ExternalUserResponseDto } from '../dto/response-external-user.dto';
 
 @ApiTags('Discover')
 @Controller('/discover')
 export class DiscoverController {
   constructor(private readonly discoverService: DiscoverService) {}
+
+  @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário retornado com sucesso',
+    type: ExternalUserResponseDto,
+  })
+  @Get('users/:id')
+  discoverPublicUsersID(
+    @Param() params: IDQueryDTO,
+  ): Promise<ExternalUserResponseDto> {
+    return this.discoverService.discoverPublicUsersID(params.id);
+  }
 
   @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo username' })
   @ApiResponse({
@@ -20,22 +34,11 @@ export class DiscoverController {
     description: 'Listagem de usuários retornada com sucesso',
     type: UserResponseDto,
   })
-  @Get('users/:username')
+  @Get('users/profile/:username')
   discoverPublicUsersByUsername(
     @Param() params: UsernameQueryDTO,
-  ): Promise<UserResponseDto> {
+  ): Promise<ExternalUserResponseDto> {
     return this.discoverService.discoverPublicUsersByUsername(params.username);
-  }
-
-  @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Usuário retornado com sucesso',
-    type: UserResponseDto,
-  })
-  @Get('users/:id')
-  discoverPublicUsersID(@Param() params: IDQueryDTO): Promise<UserResponseDto> {
-    return this.discoverService.discoverPublicUsersByUsername(params.id);
   }
 
   @ApiOperation({ summary: 'Descobrir videos de um usuario na plataforma.' })
