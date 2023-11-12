@@ -14,6 +14,7 @@ import { EngineValidationVideosService } from './engine-validation-videos.servic
 import { PaginationService } from '../../common/services/pagination.service';
 import { VideoQueryDto } from '../../discover/dto/video-query.dto';
 import { PaginatedResponseVideosDto } from '../dto/paginated-response-video.dto';
+import { UsersService } from '../../users/services/users.service';
 
 @Injectable()
 export class UserVideosService {
@@ -22,6 +23,8 @@ export class UserVideosService {
     private videoModel: Model<VideoDocument>,
     private readonly engineValidationVideosService: EngineValidationVideosService,
     private readonly paginationService: PaginationService,
+
+    private readonly usersService: UsersService,
   ) {}
 
   public async getPlatformsFromUserVideos(user_id: string): Promise<string[]> {
@@ -50,12 +53,24 @@ export class UserVideosService {
     return result.length > 0 ? result[0].platforms.sort() : [];
   }
 
-  async validateCreate(user_id: string, title: string): Promise<void> {
+  private async validateCreate(user_id: string, title: string): Promise<void> {
     const existingVideo = await this.videoModel.findOne({ user_id, title });
 
     if (existingVideo)
       throw new ConflictException(
         'Você já cadastrou um vídeo com esse titulo.',
+      );
+  }
+
+  private async checkingPrivacy(
+    user_id: string,
+    privy: boolean,
+  ): Promise<void> {
+    const user = await this.usersService.findOne(user_id);
+
+    if (!privy && user.privy)
+      throw new ConflictException(
+        'Uma conta privada não pode criar videos publicos',
       );
   }
 
@@ -66,6 +81,8 @@ export class UserVideosService {
     const url = this.engineValidationVideosService.validateURL(dto);
 
     await this.validateCreate(user_id, dto.title);
+
+    await this.checkingPrivacy(user_id, dto.privy);
 
     const created = await this.videoModel.create({ ...dto, url, user_id });
 
@@ -142,6 +159,8 @@ export class UserVideosService {
     dto: UserUpdateVideoDto,
   ): Promise<VideoResponseDto> {
     await this.validateUpdate(_id, user_id, dto.title);
+
+    if (dto.privy) await this.checkingPrivacy(user_id, dto.privy);
 
     await this.findVideoByIDOfUser(_id, user_id);
 
