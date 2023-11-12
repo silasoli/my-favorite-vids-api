@@ -37,26 +37,11 @@ export class DiscoverService {
     return new VideoUserResponseDto(video);
   }
 
-  private async findUserByUsername(username: string): Promise<User> {
-    const user = await this.userModel.findOne({ privy: false, username });
-
-    if (!user) throw new NotFoundException('User not found');
-
-    return user;
-  }
-
-  public async discoverPublicUsersByUsername(
-    username: string,
-  ): Promise<UserResponseDto> {
-    const user = await this.findUserByUsername(username);
-    return new UserResponseDto(user);
-  }
-
   public async discoverPublicVideosByUserId(
     user_id: string,
     query: VideoQueryDto,
   ): Promise<PaginatedResponseVideosDto> {
-    const filters: any = { user_id };
+    const filters: any = { user_id, privy: false };
 
     if (query.platform) filters.platform = query.platform;
 
@@ -77,4 +62,34 @@ export class DiscoverService {
 
     return new PaginatedResponseVideosDto(data, paginatedData.meta);
   }
+
+  private async findUserByUsername(username: string): Promise<User> {
+    const user = await this.userModel.findOne({ privy: false, username });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return user;
+  }
+
+  public async discoverPublicUsersByUsername(
+    username: string,
+  ): Promise<UserResponseDto> {
+    const user = await this.findUserByUsername(username);
+    return new UserResponseDto(user);
+  }
+
+  private async findUserByID(_id: string): Promise<User> {
+    const user = await this.userModel.findOne({ privy: false, _id });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return user;
+  }
+
+  public async discoverPublicUsersID(
+    username: string,
+  ): Promise<UserResponseDto> {
+    const user = await this.findUserByID(username);
+    return new UserResponseDto(user);
+  } 
 }

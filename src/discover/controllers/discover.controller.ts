@@ -1,7 +1,6 @@
 import { Controller, Get, Query, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
-import { VideoResponseDto } from '../../videos/dto/response-video.dto';
 import { DiscoverService } from '../services/discover.service';
 import { UsernameQueryDTO } from '../../common/dtos/username-query.dto';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
@@ -15,39 +14,37 @@ import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 export class DiscoverController {
   constructor(private readonly discoverService: DiscoverService) {}
 
-  @ApiOperation({ summary: 'Obter video de um usuário' })
-  @ApiResponse({
-    status: 200,
-    description: 'Video do usuário retornado com sucesso',
-    type: VideoUserResponseDto,
-  })
-  @Get('videos/:id')
-  discoverPublicVideosByID(
-    @Param() params: IDQueryDTO,
-  ): Promise<VideoUserResponseDto> {
-    return this.discoverService.findOne(params.id);
-  }
-
-  @ApiOperation({ summary: 'Descobrir usuários na plataforma' })
+  @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo username' })
   @ApiResponse({
     status: 200,
     description: 'Listagem de usuários retornada com sucesso',
     type: UserResponseDto,
   })
   @Get('users/:username')
-  discoverPublicUsers(
+  discoverPublicUsersByUsername(
     @Param() params: UsernameQueryDTO,
   ): Promise<UserResponseDto> {
     return this.discoverService.discoverPublicUsersByUsername(params.username);
   }
 
-  @ApiOperation({ summary: 'Descobrir videos na plataforma.' })
+  @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário retornado com sucesso',
+    type: UserResponseDto,
+  })
+  @Get('users/:id')
+  discoverPublicUsersID(@Param() params: IDQueryDTO): Promise<UserResponseDto> {
+    return this.discoverService.discoverPublicUsersByUsername(params.id);
+  }
+
+  @ApiOperation({ summary: 'Descobrir videos de um usuario na plataforma.' })
   @ApiResponse({
     status: 200,
     description: 'Listagem de videos retornada com sucesso',
     type: PaginatedResponseVideosDto,
   })
-  @Get('videos/users/:user_id')
+  @Get('users/videos/:user_id')
   discoverPublicVideosByUserId(
     @Param() params: UserIDQueryDTO,
     @Query() query: VideoQueryDto,
@@ -56,5 +53,18 @@ export class DiscoverController {
       params.user_id,
       query,
     );
+  }
+
+  @ApiOperation({ summary: 'Obter video publico por ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Video retornado com sucesso',
+    type: VideoUserResponseDto,
+  })
+  @Get('videos/:id')
+  discoverPublicVideosByID(
+    @Param() params: IDQueryDTO,
+  ): Promise<VideoUserResponseDto> {
+    return this.discoverService.findOne(params.id);
   }
 }
