@@ -7,9 +7,9 @@ import { Video, VideoDocument } from '../../videos/entities/video.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../../users/schemas/user.entity';
-import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 import mongoose from 'mongoose';
+import { ExternalUserResponseDto } from '../dto/response-external-user.dto';
 
 @Injectable()
 export class DiscoverService {
@@ -101,9 +101,9 @@ export class DiscoverService {
 
   public async discoverPublicUsersByUsername(
     username: string,
-  ): Promise<UserResponseDto> {
+  ): Promise<ExternalUserResponseDto> {
     const user = await this.findUserByUsername(username);
-    return new UserResponseDto(user);
+    return new ExternalUserResponseDto(user);
   }
 
   private async findUserByID(_id: string): Promise<User> {
@@ -115,9 +115,9 @@ export class DiscoverService {
   }
 
   public async discoverPublicUsersID(
-    username: string,
-  ): Promise<UserResponseDto> {
-    const user = await this.findUserByID(username);
-    return new UserResponseDto(user);
-  } 
+    _id: string,
+  ): Promise<ExternalUserResponseDto> {
+    const user = await this.findUserByID(_id);
+    return new ExternalUserResponseDto(user);
+  }
 }
