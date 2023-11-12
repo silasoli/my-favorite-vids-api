@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../../users/schemas/user.entity';
 import { UserResponseDto } from '../../users/dto/user-response.dto';
 import { VideoUserResponseDto } from '../dto/response-video-user.dto';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class DiscoverService {
@@ -61,6 +62,33 @@ export class DiscoverService {
     const data = paginatedData.data.map((video) => new VideoResponseDto(video));
 
     return new PaginatedResponseVideosDto(data, paginatedData.meta);
+  }
+
+  public async getPlatformsFromUserVideos(user_id: string): Promise<string[]> {
+    const aggregationPipeline = [
+      {
+        $match: {
+          user_id: new mongoose.Types.ObjectId(user_id),
+          privy: false,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          platforms: { $addToSet: '$platform' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          platforms: 1,
+        },
+      },
+    ];
+
+    const result = await this.videoModel.aggregate(aggregationPipeline);
+
+    return result.length > 0 ? result[0].platforms.sort() : [];
   }
 
   private async findUserByUsername(username: string): Promise<User> {
