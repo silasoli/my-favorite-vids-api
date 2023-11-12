@@ -55,6 +55,17 @@ export class DiscoverController {
     );
   }
 
+  @ApiOperation({ summary: 'Descobrir plataformas dos videos de um usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Listagem de plataformas de videos retornada com sucesso',
+    type: [String],
+  })
+  @Get('users/platforms/:user_id')
+  discoverPlatforms(@Param() params: UserIDQueryDTO): Promise<string[]> {
+    return this.discoverService.getPlatformsFromUserVideos(params.user_id);
+  }
+
   @ApiOperation({ summary: 'Obter video publico por ID' })
   @ApiResponse({
     status: 200,
