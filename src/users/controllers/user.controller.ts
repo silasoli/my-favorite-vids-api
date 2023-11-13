@@ -29,7 +29,7 @@ import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
 import { UserRequestDTO } from '../../common/dtos/user-request.dto';
 import {
-  UploadProfilePictureByURLDto,
+  UpdateProfilePictureDto,
 } from '../dto/upload-profile-picture.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
@@ -147,12 +147,12 @@ export class UserController {
   })
   @Role([Roles.USER])
   @Patch('/profile/picture')
-  @ApiBody({ type: UploadProfilePictureByURLDto })
+  @ApiBody({ type: UpdateProfilePictureDto })
   public async updateProfilePicture(
     @UserRequest() user: UserRequestDTO,
-    @Body() data: UploadProfilePictureByURLDto,
+    @Body() dto: UpdateProfilePictureDto,
   ): Promise<string | null> {
-    return this.userService.updateProfilePictureByURL(user._id, data);
+    return this.userService.updateProfilePictureByURL(user._id, dto);
   }
 
   @ApiOperation({ summary: 'Buscar foto de perfil do usuário' })
