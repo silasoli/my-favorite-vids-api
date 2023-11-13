@@ -94,7 +94,7 @@ export class DiscoverService {
   private async findUserByUsername(username: string): Promise<User> {
     const user = await this.userModel.findOne({ privy: false, username });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     return user;
   }
@@ -109,7 +109,7 @@ export class DiscoverService {
   private async findUserByID(_id: string): Promise<User> {
     const user = await this.userModel.findOne({ privy: false, _id });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     return user;
   }

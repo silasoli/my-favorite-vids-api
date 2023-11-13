@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User, UserDocument } from '../schemas/user.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,7 +6,10 @@ import { ProfileUserResponseDto } from '../dto/profile-user-response.dto';
 import { UpdateProfileUserDto } from '../dto/update-profile-user.dto';
 import { DeleteUserDto } from '../dto/delete-user.dto';
 import { UsersService } from './users.service';
-import { UploadProfilePictureDto } from '../dto/upload-profile-picture.dto';
+import {
+  UploadProfilePictureByURLDto,
+  UploadProfilePictureDto,
+} from '../dto/upload-profile-picture.dto';
 import { join } from 'path';
 import * as fs from 'fs';
 import { UsersQueryDto } from '../dto/users-query.dto';
@@ -89,5 +92,27 @@ export class UserService {
       : 'default-image.png';
 
     return join(process.cwd(), 'uploads/profile-picture/' + profilePicture);
+  }
+
+  public async getAllProfilePictures(): Promise<string[]> {
+    const diretorioFotos = join(process.cwd(), 'uploads/profile-picture/');
+    return fs.promises.readdir(diretorioFotos);
+  }
+
+  public async updateProfilePictureByURL(
+    _id: string,
+    dto: UploadProfilePictureByURLDto,
+  ): Promise<string | null> {
+    const pictures = await this.getAllProfilePictures();
+
+    if (dto.url && !pictures.includes(dto.url))
+      throw new NotFoundException('Foto de perfil não encontrada.');
+
+    await this.userModel.updateOne(
+      { _id },
+      { profile_picture: dto.url || null },
+    );
+
+    return this.getProfilePictureURL(_id);
   }
 }
