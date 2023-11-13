@@ -138,6 +138,10 @@ export class UserController {
     description: 'Foto de perfil atualizada com sucesso',
   })
   @ApiResponse({
+    status: 404,
+    description: 'Foto de perfil não encontrada.',
+  })
+  @ApiResponse({
     status: 401,
     description: 'Não autorizado',
   })
