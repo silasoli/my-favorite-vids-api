@@ -28,7 +28,9 @@ import { RoleGuard } from '../../roles/guards/role.guard';
 import { Role } from '../../roles/decorators/roles.decorator';
 import Roles from '../../roles/enums/role.enum';
 import { UserRequestDTO } from '../../common/dtos/user-request.dto';
-import { UploadProfilePictureDto } from '../dto/upload-profile-picture.dto';
+import {
+  UploadProfilePictureByURLDto,
+} from '../dto/upload-profile-picture.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import path = require('path');
 import { diskStorage } from 'multer';
@@ -37,20 +39,20 @@ import { UserService } from '../services/user.service';
 import { PaginatedResponseUsersDto } from '../dto/paginated-response-users.dto';
 import { UsersQueryDto } from '../dto/users-query.dto';
 
-export const storage = diskStorage({
-  destination: './uploads/profile-picture/',
-  filename: (req: any, file, cb) => {
-    const userid = req.user._id;
-    const filename: string =
-      path.parse(file.originalname).name.replace(/\s/g, '') +
-      userid +
-      new Date().getTime();
+// export const storage = diskStorage({
+//   destination: './uploads/profile-picture/',
+//   filename: (req: any, file, cb) => {
+//     const userid = req.user._id;
+//     const filename: string =
+//       path.parse(file.originalname).name.replace(/\s/g, '') +
+//       userid +
+//       new Date().getTime();
 
-    const extension: string = path.parse(file.originalname).ext;
+//     const extension: string = path.parse(file.originalname).ext;
 
-    cb(null, `${filename}${extension}`);
-  },
-});
+//     cb(null, `${filename}${extension}`);
+//   },
+// });
 
 @ApiBearerAuth()
 @ApiTags('User Profile')
@@ -109,6 +111,27 @@ export class UserController {
     return this.userService.deleteUser(user._id, dto);
   }
 
+  // @ApiOperation({ summary: 'Modificar foto de perfil do usuário' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Foto de perfil atualizada com sucesso',
+  // })
+  // @ApiResponse({
+  //   status: 401,
+  //   description: 'Não autorizado',
+  // })
+  // @Role([Roles.USER])
+  // @Patch('/profile/picture')
+  // // @ApiConsumes('multipart/form-data')
+  // @ApiBody({ type: UploadProfilePictureDto })
+  // // @UseInterceptors(FileInterceptor('file', { storage }))
+  // public async updateProfilePicture(
+  //   @UserRequest() user: UserRequestDTO,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ): Promise<string | null> {
+  //   return this.userService.updateProfilePicture(user._id, { file });
+  // }
+
   @ApiOperation({ summary: 'Modificar foto de perfil do usuário' })
   @ApiResponse({
     status: 200,
@@ -120,14 +143,12 @@ export class UserController {
   })
   @Role([Roles.USER])
   @Patch('/profile/picture')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadProfilePictureDto })
-  @UseInterceptors(FileInterceptor('file', { storage }))
+  @ApiBody({ type: UploadProfilePictureByURLDto })
   public async updateProfilePicture(
     @UserRequest() user: UserRequestDTO,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() data: UploadProfilePictureByURLDto,
   ): Promise<string | null> {
-    return this.userService.updateProfilePicture(user._id, { file });
+    return this.userService.updateProfilePictureByURL(user._id, data);
   }
 
   @ApiOperation({ summary: 'Buscar foto de perfil do usuário' })
@@ -148,5 +169,20 @@ export class UserController {
     const fileUrl = await this.userService.getProfilePicture(user._id);
 
     return of(res.sendFile(fileUrl));
+  }
+
+  @ApiOperation({ summary: 'Buscar fotos de perfils' })
+  @ApiResponse({
+    status: 200,
+    description: 'Fotos de perfil retornadas com sucesso',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Não autorizado',
+  })
+  @Role([Roles.USER])
+  @Get('profile-pictures')
+  public async getAllProfilePictures(): Promise<string[]> {
+    return this.userService.getAllProfilePictures();
   }
 }

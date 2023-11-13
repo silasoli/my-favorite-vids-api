@@ -15,3 +15,8 @@ export class UploadProfilePictureDto {
   @ApiProperty({ type: 'string', format: 'binary', required: false })
   file: ProfilePictureFileDto | null;
 }
+
+export class UploadProfilePictureByURLDto {
+  @ApiProperty({ type: 'string', required: false })
+  url: string | null;
+}

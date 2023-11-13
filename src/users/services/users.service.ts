@@ -47,7 +47,7 @@ export class UsersService {
   private async findUserByID(_id: string): Promise<User> {
     const user = await this.userModel.findById(_id);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     return user;
   }
@@ -60,7 +60,7 @@ export class UsersService {
   public async findRolesOfUser(_id: string): Promise<Role[]> {
     const user = await this.userModel.findOne({ _id }, ['roles']);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException('Usuário não encontrado.');
 
     return user.roles;
   }
