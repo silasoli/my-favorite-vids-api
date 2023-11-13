@@ -7,7 +7,7 @@ import { UpdateProfileUserDto } from '../dto/update-profile-user.dto';
 import { DeleteUserDto } from '../dto/delete-user.dto';
 import { UsersService } from './users.service';
 import {
-  UploadProfilePictureByURLDto,
+  UpdateProfilePictureDto,
   UploadProfilePictureDto,
 } from '../dto/upload-profile-picture.dto';
 import { join } from 'path';
@@ -101,16 +101,16 @@ export class UserService {
 
   public async updateProfilePictureByURL(
     _id: string,
-    dto: UploadProfilePictureByURLDto,
+    dto: UpdateProfilePictureDto,
   ): Promise<string | null> {
     const pictures = await this.getAllProfilePictures();
 
-    if (dto.url && !pictures.includes(dto.url))
+    if (dto.img && !pictures.includes(dto.img))
       throw new NotFoundException('Foto de perfil não encontrada.');
 
     await this.userModel.updateOne(
       { _id },
-      { profile_picture: dto.url || null },
+      { profile_picture: dto.img || null },
     );
 
     return this.getProfilePictureURL(_id);

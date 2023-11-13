@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class ProfilePictureFileDto {
   fieldname: string;
@@ -16,7 +17,8 @@ export class UploadProfilePictureDto {
   file: ProfilePictureFileDto | null;
 }
 
-export class UploadProfilePictureByURLDto {
-  @ApiProperty({ type: 'string', required: false })
-  url: string | null;
+export class UpdateProfilePictureDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  img: string | null;
 }
