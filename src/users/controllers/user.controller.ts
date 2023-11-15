@@ -10,6 +10,7 @@ import {
   UploadedFile,
   Res,
   Query,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -161,6 +162,10 @@ export class UserController {
     description: 'Foto de perfil retornada com sucesso',
   })
   @ApiResponse({
+    status: 404,
+    description: 'Foto de perfil não encontrada.',
+  })
+  @ApiResponse({
     status: 401,
     description: 'Não autorizado',
   })
@@ -188,5 +193,29 @@ export class UserController {
   @Get('profile-pictures')
   public async getAllProfilePictures(): Promise<string[]> {
     return this.userService.getAllProfilePictures();
+  }
+
+  @ApiOperation({ summary: 'Buscar foto de perfil' })
+  @ApiResponse({
+    status: 200,
+    description: 'Foto de perfil retornada com sucesso',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Foto de perfil não encontrada',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Não autorizado',
+  })
+  @Role([Roles.USER])
+  @Get('profile-pictures/:name')
+  public async getProfilePicturesByName<T>(
+    @Res() res,
+    @Param('name') params: string,
+  ): Promise<Observable<T>> {
+    const fileUrl = await this.userService.getProfilePictureByName(params);
+
+    return of(res.sendFile(fileUrl));
   }
 }

@@ -56,33 +56,33 @@ export class UserService {
     return picture.profile_picture;
   }
 
-  private deleteProfilePicture(url: string) {
-    const profilePicturePath = join(
-      process.cwd(),
-      'uploads/profile-picture/',
-      url,
-    );
+  // private deleteProfilePicture(url: string) {
+  //   const profilePicturePath = join(
+  //     process.cwd(),
+  //     'uploads/profile-picture/',
+  //     url,
+  //   );
 
-    fs.unlink(profilePicturePath, (err) => {
-      if (err) console.error(`Error deleting profile picture: ${err}`);
-    });
-  }
+  //   fs.unlink(profilePicturePath, (err) => {
+  //     if (err) console.error(`Error deleting profile picture: ${err}`);
+  //   });
+  // }
 
-  public async updateProfilePicture(
-    _id: string,
-    dto: UploadProfilePictureDto,
-  ): Promise<string | null> {
-    const profilePicture = await this.getProfilePictureURL(_id);
+  // public async updateProfilePicture(
+  //   _id: string,
+  //   dto: UploadProfilePictureDto,
+  // ): Promise<string | null> {
+  //   const profilePicture = await this.getProfilePictureURL(_id);
 
-    if (profilePicture) this.deleteProfilePicture(profilePicture);
+  //   if (profilePicture) this.deleteProfilePicture(profilePicture);
 
-    await this.userModel.updateOne(
-      { _id },
-      { profile_picture: dto.file.filename ? dto.file.filename : null },
-    );
+  //   await this.userModel.updateOne(
+  //     { _id },
+  //     { profile_picture: dto.file.filename ? dto.file.filename : null },
+  //   );
 
-    return this.getProfilePictureURL(_id);
-  }
+  //   return this.getProfilePictureURL(_id);
+  // }
 
   public async getProfilePicture(_id: string): Promise<string> {
     const user = await this.userModel.findOne({ _id });
@@ -97,6 +97,15 @@ export class UserService {
   public async getAllProfilePictures(): Promise<string[]> {
     const diretorioFotos = join(process.cwd(), 'uploads/profile-picture/');
     return fs.promises.readdir(diretorioFotos);
+  }
+
+  public async getProfilePictureByName(name: string): Promise<string> {
+    const pictures = await this.getAllProfilePictures();
+
+    if (!pictures.includes(name))
+      throw new NotFoundException('Foto de perfil não encontrada.');
+
+    return join(process.cwd(), 'uploads/profile-picture/' + name);
   }
 
   public async updateProfilePictureByURL(
