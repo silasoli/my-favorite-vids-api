@@ -147,7 +147,7 @@ export class UserController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Patch('/profile/picture')
+  @Patch('/profile-pictures')
   @ApiBody({ type: UpdateProfilePictureDto })
   public async updateProfilePicture(
     @UserRequest() user: UserRequestDTO,
@@ -170,7 +170,7 @@ export class UserController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Get('profile/picture')
+  @Get('profile-pictures')
   public async getProfilePicture<T>(
     @UserRequest() user: UserRequestDTO,
     @Res() res,

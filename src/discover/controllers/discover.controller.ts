@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Param } from '@nestjs/common';
+import { Controller, Get, Query, Param, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { IDQueryDTO } from '../../common/dtos/id-query.dto';
 import { DiscoverService } from '../services/discover.service';
@@ -9,6 +9,7 @@ import { VideoQueryDto } from '../dto/video-query.dto';
 import { UserIDQueryDTO } from '../../common/dtos/userid-query.dto';
 import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 import { ExternalUserResponseDto } from '../dto/response-external-user.dto';
+import { Observable, of } from 'rxjs';
 
 @ApiTags('Discover')
 @Controller('/discover')
@@ -26,6 +27,22 @@ export class DiscoverController {
     @Param() params: IDQueryDTO,
   ): Promise<ExternalUserResponseDto> {
     return this.discoverService.discoverPublicUsersID(params.id);
+  }
+
+  @ApiOperation({ summary: 'Descobrir foto de perfil de um usuários pelo ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Foto de perfil retornada com sucesso',
+    type: ExternalUserResponseDto,
+  })
+  @Get('users/:id/profile-pictures')
+  async getProfilePicture<T>(
+    @Param() params: IDQueryDTO,
+    @Res() res,
+  ): Promise<Observable<T>> {
+    const fileUrl = await this.discoverService.getProfilePicture(params.id);
+
+    return of(res.sendFile(fileUrl));
   }
 
   @ApiOperation({ summary: 'Descobrir usuários na plataforma pelo username' })
