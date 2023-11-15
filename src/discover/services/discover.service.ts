@@ -10,6 +10,7 @@ import { User, UserDocument } from '../../users/schemas/user.entity';
 import { VideoUserResponseDto } from '../dto/response-video-user.dto';
 import mongoose from 'mongoose';
 import { ExternalUserResponseDto } from '../dto/response-external-user.dto';
+import { join } from 'path';
 
 @Injectable()
 export class DiscoverService {
@@ -120,4 +121,16 @@ export class DiscoverService {
     const user = await this.findUserByID(_id);
     return new ExternalUserResponseDto(user);
   }
+
+  public async getProfilePicture(_id: string): Promise<string> {
+    const user = await this.userModel.findOne({ _id });
+
+    const profilePicture = user.profile_picture
+      ? user.profile_picture
+      : 'default-image.png';
+
+    return join(process.cwd(), 'uploads/profile-picture/' + profilePicture);
+  }
 }
+
+
