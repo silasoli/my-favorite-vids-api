@@ -10,14 +10,9 @@ import { ProfileUserResponseDto } from '../dto/profile-user-response.dto';
 import { UpdateProfileUserDto } from '../dto/update-profile-user.dto';
 import { DeleteUserDto } from '../dto/delete-user.dto';
 import { UsersService } from './users.service';
-import {
-  UpdateProfilePictureDto,
-  UploadProfilePictureDto,
-} from '../dto/upload-profile-picture.dto';
+import { UpdateProfilePictureDto } from '../dto/upload-profile-picture.dto';
 import { join } from 'path';
 import * as fs from 'fs';
-import { UsersQueryDto } from '../dto/users-query.dto';
-import { PaginatedResponseUsersDto } from '../dto/paginated-response-users.dto';
 import { PaginationService } from '../../common/services/pagination.service';
 
 @Injectable()
