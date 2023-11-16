@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User, UserDocument } from '../schemas/user.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -96,7 +100,8 @@ export class UserService {
 
   public async getAllProfilePictures(): Promise<string[]> {
     const diretorioFotos = join(process.cwd(), 'uploads/profile-picture/');
-    return fs.promises.readdir(diretorioFotos);
+    const items = await fs.promises.readdir(diretorioFotos);
+    return items.filter((item) => item !== 'default-image.png');
   }
 
   public async getProfilePictureByName(name: string): Promise<string> {
