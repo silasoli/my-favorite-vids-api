@@ -190,7 +190,7 @@ export class UserController {
     description: 'Não autorizado',
   })
   @Role([Roles.USER])
-  @Get('profile-pictures')
+  @Get('profile-pictures/names')
   public async getAllProfilePictures(): Promise<string[]> {
     return this.userService.getAllProfilePictures();
   }
